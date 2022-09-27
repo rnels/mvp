@@ -23,3 +23,7 @@ module.exports.saveComments = (comments) => {
   }
   return Promise.all(updatePromises);
 }
+
+module.exports.getAllSearches = () => {
+  return Comment.distinct('search');
+}

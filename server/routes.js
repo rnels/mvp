@@ -8,7 +8,6 @@ const model = require('./database/model');
 // search - Youtube search query from which to retrieve comments from the db
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 router.get('/comments', (req, res) => {
-  // console.log(req.query)
   model.getCommentsBySearchPartial(req.query.search)
     .then((results) => {
       // console.log(results);
@@ -59,7 +58,8 @@ router.post('/comments', (req, res) => {
               part: 'snippet',
               moderationStatus: 'published',
               order: 'relevance',
-              searchTerms: req.body.search, // TODO: May take this out, get all comments for videos relevant to the query
+              maxResults: 100,
+              // searchTerms: req.body.search, // TODO: May take this out, get all comments for videos relevant to the query
               videoId: item.id.videoId,
               key: process.env.API_TOKEN
             }
@@ -122,5 +122,24 @@ router.post('/comments', (req, res) => {
 //       res.sendStatus(400);
 //     });
 // });
+
+router.get('/searches', (req, res) => {
+  model.getAllSearches()
+    .then((results) => {
+      if (!results.length) {
+        res.sendStatus(404);
+        return;
+      }
+      let searches = [];
+      for (let result of results) {
+        searches.push(result);
+      }
+      res.status(200).send({searches});
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(404);
+    });
+});
 
 module.exports = router;

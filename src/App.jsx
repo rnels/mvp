@@ -1,77 +1,47 @@
 import './App.css';
 import { serverURL } from './config.js';
+import Wordcloud from './components/Wordcloud.jsx';
 
 import React from 'react';
 import axios from 'axios';
-import ReactWordcloud from 'react-wordcloud';
-
-const words = [
-  {
-    text: 'told',
-    value: 11,
-  },
-  {
-    text: 'mistake',
-    value: 11,
-  },
-  {
-    text: 'thought',
-    value: 11,
-  },
-  {
-    text: 'bad',
-    value: 11,
-  },
-]
-
-function SimpleWordcloud() {
-  return <ReactWordcloud words={words} />
-}
-
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      words: [],
+      comments: [],
+      searches: [],
       getSearch: '',
-      addSearch: ''
+      addSearch: '',
+      minWords: 3,
+      maxWords: 5,
+      minScore: 10,
+      maxScore: 1000,
+      filter: '',
+      commonWordFilter: true
     };
-  }
-
-  createWordsObj(comments) {
-    let temp = {};
-    for (let word of comments.join(' ').toLowerCase().split(' ')) {
-      if (!temp[word]) {
-        temp[word] = 0;
-      }
-      temp[word] += 1;
-    }
-
-    let words = [];
-
-    for (let word in temp) {
-      words.push({
-        text: word,
-        value: temp[word]
-      })
-    }
-
-    for (let word of words) {
-      console.log(word.text, word.value);
-    }
-    this.setState({words});
+    this.getComments = this.getComments.bind(this);
+    this.getSearches = this.getSearches.bind(this);
+    this.submitSearch = this.submitSearch.bind(this);
   }
 
   getComments() {
-    console.log('getComments', this.state.getSearch);
     axios.get(`${serverURL}/comments`, {
       params: { search: this.state.getSearch }
     })
       .then((result) => {
-        console.log(result.data.comments); // DEBUG: Should contain a comments object
-        this.createWordsObj(result.data.comments)
+        console.log(result.data.comments.length); // DEBUG: Should contain comment text
+        this.setState({comments: result.data.comments});
+      })
+      .catch((error) => console.log(error));
+  }
+
+  getSearches() {
+    axios.get(`${serverURL}/searches`)
+      .then((result) => {
+        console.log(result.data.searches); // DEBUG: Should contain searches
+        this.setState({searches: result.data.searches});
       })
       .catch((error) => console.log(error));
   }
@@ -79,13 +49,17 @@ class App extends React.Component {
   submitSearch() {
     console.log('submitSearch', this.state.addSearch);
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
-      .then((success) => console.log(success))
+      .then((success) => {
+        console.log(success);
+        this.getSearches();
+      })
       .catch((error) => console.log(error));
   }
 
   componentDidMount() {
-    // this.setState({addSearch: 'how to use the youtube API'}, this.submitSearch()) // DEBUG
-    // this.setState({getSearch: 'how to use the youtube API'}, this.getComments()) // DEBUG
+    // this.setState({addSearch: 'how to use the youtube API'}, () => this.submitSearch()) // DEBUG
+    // this.setState({getSearch: 'how to use the youtube API'}, () => this.getComments()) // DEBUG
+    this.getSearches();
   }
 
   // TODO: Consolidate adding and searching forms
@@ -132,11 +106,73 @@ class App extends React.Component {
             value='Add'
           />
         </form>
-        {/* {this.state.comments.length > 0 &&
-           this.state.comments.map((comment, i) => {
-            return <span key={`${comment}-${i}`}>{comment}</span>
-        })} */}
-        <ReactWordcloud words={this.state.words} />
+        <form onSubmit={(e) => {
+          e.preventDefault();
+        }}>
+          <label>
+            Min Words
+            <input
+              type='Number'
+              name='set-min-words'
+              value={this.state.minWords}
+              min={1}
+              max={this.state.maxWords}
+              onChange={(e) => this.setState({minWords: parseInt(e.target.value)})}
+            />
+          </label>
+          <label>
+            Max Words
+            <input
+              type='Number'
+              name='set-max-words'
+              value={this.state.maxWords}
+              min={this.state.minWords}
+              onChange={(e) => this.setState({maxWords: parseInt(e.target.value)})}
+            />
+          </label>
+          <label>
+            Saved searches
+            <select
+            onChange={(e) => {
+              e.preventDefault();
+              this.setState({getSearch: e.target.value}, () => this.getComments());
+            }}>
+              {this.state.searches.map((search) => {
+                return <option value={search}>{search}</option>
+              })}
+            </select>
+          </label>
+        </form>
+        <form>
+          <label>
+            Filter
+            <input
+              type='text'
+              name='filter'
+              value={this.state.filter}
+              onChange={(e) => {this.setState({filter: e.target.value})}}
+            />
+          </label>
+        </form>
+        <label>
+            Filter Common Words
+            <input
+              type='checkbox'
+              name='filter-common-words'
+              checked={this.state.commonWordFilter}
+              onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
+            />
+        </label>
+        <Wordcloud
+          key={'cloud'}
+          comments={this.state.comments}
+          minWords={this.state.minWords}
+          maxWords={this.state.maxWords}
+          minScore={this.state.minScore}
+          maxScore={this.state.maxScore}
+          filter={this.state.filter}
+          commonWordFilter={this.state.commonWordFilter}
+        />
       </div>
     );
   }
