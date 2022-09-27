@@ -9,7 +9,7 @@ const model = require('./database/model');
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 router.get('/comments', (req, res) => {
   // console.log(req.query)
-  model.getComments(req.query.search)
+  model.getCommentsBySearchPartial(req.query.search)
     .then((results) => {
       // console.log(results);
       if (!results.length) {
@@ -31,7 +31,6 @@ router.get('/comments', (req, res) => {
 // Get top comments for a search query from YT API, save to db
 // Expects from req.body:
 // search - Youtube search query from which to retrieve comments from the API
-// TODO: Take a multi step approach
 // First submit the query to youtube API, get list of results
 // From that list of results, get the top comments
 // Save the top comments by url and search query
@@ -42,37 +41,31 @@ router.post('/comments', (req, res) => {
   // Search API for videos by query
   axios.get(`${process.env.API_URL}/search`, {
     params: {
-      part: [
-        'id'
-      ],
+      part: 'id',
       maxResults: 25,
       order: 'relevance',
-      q: req.body.search
-    },
-    headers: {
-      Authorization: `Bearer ${process.env.API_AUTH}`,
-      Accept: 'application/json'
+      q: req.body.search,
+      key: process.env.API_TOKEN
     }
   })
-    .then((results) => {
+    .then((videoResults) => {
       // Get videos from yt API by search query
       let commentPromises = [];
-      for (let item of results.items) {
+      for (let item of videoResults.data.items) {
         commentPromises.push(
+          // Get relevant comments from videos
           axios.get(`${process.env.API_URL}/commentThreads`, {
             params: {
-              part: [
-                'snippet'
-              ],
+              part: 'snippet',
               moderationStatus: 'published',
               order: 'relevance',
               searchTerms: req.body.search, // TODO: May take this out, get all comments for videos relevant to the query
-              videoId: item.id.videoId
-            },
-            headers: {
-              Authorization: `Bearer ${process.env.API_AUTH}`,
-              Accept: 'application/json'
+              videoId: item.id.videoId,
+              key: process.env.API_TOKEN
             }
+          })
+          .catch((error) => {
+            // console.log(error.data);
           })
         );
       }
@@ -81,18 +74,20 @@ router.post('/comments', (req, res) => {
     .then((promiseResults) => {
       let comments = [];
       for (let commentResults of promiseResults) {
-        for (let item of commentResults.items) {
-          comments.push(
-            {
-              commentId: item.id,
-              username: item.snippet.topLevelComment.snippet.authorDisplayName,
-              userId: item.snippet.topLevelComment.snippet.authorChannelId.value,
-              text: item.snippet.topLevelComment.snippet.textOriginal,
-              likeCount: item.snippet.topLevelComment.snippet.likeCount,
-              videoId: item.snippet.topLevelComment.snippet.videoId,
-              search: req.body.search
-            }
-          )
+        if (commentResults && commentResults.data) {
+          for (let item of commentResults.data.items) {
+            comments.push(
+              {
+                commentId: item.id,
+                username: item.snippet.topLevelComment.snippet.authorDisplayName,
+                userId: item.snippet.topLevelComment.snippet.authorChannelId.value,
+                text: item.snippet.topLevelComment.snippet.textOriginal,
+                likeCount: item.snippet.topLevelComment.snippet.likeCount,
+                videoId: item.snippet.topLevelComment.snippet.videoId,
+                search: req.body.search
+              }
+            )
+          }
         }
       }
       return model.saveComments(comments);
@@ -106,5 +101,26 @@ router.post('/comments', (req, res) => {
       res.sendStatus(400);
     });
 });
+
+// TESTING POST ROUTE / MODEL
+// router.post('/comments', (req, res) => {
+//   model.saveComments([{
+//     commentId: 'aaaaaaa',
+//     username: 'Commenting Guy',
+//     userId: 'aaaaaa',
+//     text: 'How does the comment go again?',
+//     likeCount: 1000,
+//     videoId: '0EqSXDwTq6U',
+//     search: '-t-'
+//   }])
+//     .then((results) => {
+//       console.log(results);
+//       res.sendStatus(201);
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//       res.sendStatus(400);
+//     });
+// });
 
 module.exports = router;

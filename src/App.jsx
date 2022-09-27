@@ -35,9 +35,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // this.getComments(); // DEBUG
-    // this.submitSearch(); // DEBUG
-    // this.setState({search: 'how to use the youtube API'})  // DEBUG
+    // this.setState({addSearch: 'how to use the youtube API'}, this.submitSearch()) // DEBUG
+    // this.setState({getSearch: 'how to use the youtube API'}, this.getComments()) // DEBUG
   }
 
   // TODO: Consolidate adding and searching forms
