@@ -3,16 +3,65 @@ import { serverURL } from './config.js';
 
 import React from 'react';
 import axios from 'axios';
+import ReactWordcloud from 'react-wordcloud';
+
+const words = [
+  {
+    text: 'told',
+    value: 11,
+  },
+  {
+    text: 'mistake',
+    value: 11,
+  },
+  {
+    text: 'thought',
+    value: 11,
+  },
+  {
+    text: 'bad',
+    value: 11,
+  },
+]
+
+function SimpleWordcloud() {
+  return <ReactWordcloud words={words} />
+}
+
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      comments: [],
+      words: [],
       getSearch: '',
       addSearch: ''
     };
+  }
+
+  createWordsObj(comments) {
+    let temp = {};
+    for (let word of comments.join(' ').toLowerCase().split(' ')) {
+      if (!temp[word]) {
+        temp[word] = 0;
+      }
+      temp[word] += 1;
+    }
+
+    let words = [];
+
+    for (let word in temp) {
+      words.push({
+        text: word,
+        value: temp[word]
+      })
+    }
+
+    for (let word of words) {
+      console.log(word.text, word.value);
+    }
+    this.setState({words});
   }
 
   getComments() {
@@ -22,7 +71,7 @@ class App extends React.Component {
     })
       .then((result) => {
         console.log(result.data.comments); // DEBUG: Should contain a comments object
-        this.setState({comments: result.data.comments});
+        this.createWordsObj(result.data.comments)
       })
       .catch((error) => console.log(error));
   }
@@ -83,10 +132,11 @@ class App extends React.Component {
             value='Add'
           />
         </form>
-        {this.state.comments.length > 0 &&
+        {/* {this.state.comments.length > 0 &&
            this.state.comments.map((comment, i) => {
             return <span key={`${comment}-${i}`}>{comment}</span>
-        })}
+        })} */}
+        <ReactWordcloud words={this.state.words} />
       </div>
     );
   }
