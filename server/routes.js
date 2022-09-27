@@ -6,7 +6,7 @@ const model = require('./database/model');
 // Get comments from db
 // Expects from req.query:
 // search - Youtube search query from which to retrieve comments from the db
-// TODO: Have this work with partial searches
+// Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 router.get('/comments', (req, res) => {
   // console.log(req.query)
   model.getComments(req.query.search)
