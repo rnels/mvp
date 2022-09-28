@@ -4,6 +4,7 @@ import CloudLogo from './components/CloudLogo.jsx';
 
 import Wordcloud from './components/Wordcloud.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
+import RangeSliderScores from './components/RangeSliderScores.jsx';
 
 import React from 'react';
 import axios from 'axios';
@@ -19,8 +20,10 @@ class App extends React.Component {
       addSearch: '',
       minWords: 2,
       maxWords: 5,
-      minScore: 5,
-      maxScore: 300,
+      minScore: 1,
+      maxScore: 5000,
+      bottomScore: 0,
+      topScore: 0,
       filter: '',
       commonWordFilter: true,
       loading: false
@@ -29,6 +32,7 @@ class App extends React.Component {
     this.getComments = this.getComments.bind(this);
     this.getSearches = this.getSearches.bind(this);
     this.submitSearch = this.submitSearch.bind(this);
+    this.setScoreRange = this.setScoreRange.bind(this);
   }
 
   getComments() {
@@ -71,7 +75,6 @@ class App extends React.Component {
   submitSearch() {
     // console.log('submitSearch', this.state.addSearch);
     if (!this.state.loading) this.setState({loading: true});
-
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then((success) => {
         this.getSearches();
@@ -80,6 +83,13 @@ class App extends React.Component {
         this.setState({loading: false});
         console.log(error)
       });
+  }
+
+  setScoreRange(bottomScore, topScore) {
+    this.setState({
+      bottomScore,
+      topScore
+    });
   }
 
   componentDidMount() {
@@ -153,6 +163,7 @@ class App extends React.Component {
             <div className='word-filters'>
               <h3>Filters</h3>
               <RangeSlider
+                key='count-slider'
                 onSubmit={(minWords, maxWords) => {
                   this.setState({
                     minWords,
@@ -161,6 +172,19 @@ class App extends React.Component {
                 }}
                 minWords={this.state.minWords}
                 maxWords={this.state.maxWords}
+              />
+              <RangeSliderScores
+                key='score-slider'
+                onSubmit={(minScore, maxScore) => {
+                  this.setState({
+                    minScore,
+                    maxScore
+                  });
+                }}
+                minScore={this.state.minScore}
+                maxScore={this.state.maxScore}
+                bottomScore={this.state.bottomScore}
+                topScore={this.state.topScore}
               />
               <label>
                 Includes
@@ -193,6 +217,7 @@ class App extends React.Component {
             maxScore={this.state.maxScore}
             filter={this.state.filter}
             commonWordFilter={this.state.commonWordFilter}
+            setScoreRange={this.setScoreRange}
           />
       </div>
     );

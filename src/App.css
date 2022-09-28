@@ -91,7 +91,7 @@ small {
 
 h3 {
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 5px;
 }
 
 /* The animation code */
@@ -130,4 +130,8 @@ h3 {
 }
 .cloud-logo-exit-done {
   fill: #ececec;
+}
+
+.MuiSlider-markLabel {
+  color: #ececec!important;
 }

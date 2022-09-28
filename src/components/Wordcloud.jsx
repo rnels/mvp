@@ -3,7 +3,7 @@ import { memo } from 'react';
 
 import { removeStopwords } from 'stopword';
 
-export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter}) {
+export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter, setScoreRange}) {
 
   if (!comments.length) {
     return (
@@ -37,15 +37,29 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
   }
 
   let words = [];
+  let bottomScore = null;
+  let topScore = null;
 
   for (let key in temp) {
-    if (temp[key] >= minScore && temp[key] < maxScore && key.includes(filter)) {
+    if (bottomScore === null) {
+      bottomScore = temp[key];
+    } else if (bottomScore > temp[key]) {
+      bottomScore = temp[key];
+    }
+    if (topScore === null) {
+      topScore = temp[key];
+    } else if (topScore < temp[key]) {
+      topScore = temp[key];
+    }
+    if (temp[key] >= minScore && temp[key] <= maxScore && key.includes(filter)) {
       words.push({
         text: key,
         value: temp[key]
       })
     }
   }
+
+  if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
 
   const options = {
     colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
