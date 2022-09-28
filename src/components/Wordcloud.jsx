@@ -1,6 +1,8 @@
 import ReactWordcloud from 'react-wordcloud';
 
-export default function Wordcloud({comments, filter='', minWords, maxWords, minScore, maxScore, commonWordFilter}) {
+import { memo } from 'react';
+
+export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter}) {
 
   let temp = {};
   // Forgive me
@@ -19,12 +21,13 @@ export default function Wordcloud({comments, filter='', minWords, maxWords, minS
     'im',
     'as',
     'we',
-    'me',
     'she',
     'he',
     'her',
     'hers',
     'his',
+    'him',
+    'there',
     'they',
     'their',
     'theirs',
@@ -43,11 +46,10 @@ export default function Wordcloud({comments, filter='', minWords, maxWords, minS
     'was',
     'at',
     'that',
+    'thats',
     'this',
-    'my',
     'for',
     'by',
-    'how',
     'any',
     'just',
     'or',
@@ -69,10 +71,6 @@ export default function Wordcloud({comments, filter='', minWords, maxWords, minS
     'some',
     'all',
     'way',
-    'when',
-    'where',
-    'how',
-    'why',
     'think',
     'were',
     'go',
@@ -108,7 +106,7 @@ export default function Wordcloud({comments, filter='', minWords, maxWords, minS
         let phrase = split.slice(j, j + z).join(' ');
         if (phrase.length > 2) { // Exclude phrases under 3 characters
           if (!temp[phrase]) {
-            temp[phrase] = 0;
+            temp[phrase] = 1;
           }
           temp[phrase] += 1;
         }
@@ -125,8 +123,36 @@ export default function Wordcloud({comments, filter='', minWords, maxWords, minS
         value: temp[key]
       })
     }
-
   }
 
-  return <ReactWordcloud words={words}/>;
-}
+  const options = {
+    colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
+    enableTooltip: true,
+    deterministic: false,
+    fontFamily: "Arial",
+    fontSizes: [10, 40],
+    fontStyle: "normal",
+    fontWeight: "normal",
+    padding: 1,
+    rotations: 4,
+    rotationAngles: [-40, 40],
+    scale: "sqrt",
+    spiral: "archimedean",
+    transitionDuration: 1000
+  };
+  const size = [
+    window.innerWidth > 750 ? window.innerWidth * 0.50 : window.innerWidth * 0.95,
+    window.innerHeight * 0.50
+  ];
+
+  return (
+    <div className='wordcloud'>
+      <ReactWordcloud
+        words={words}
+        options={options}
+        size={size}
+      />
+    </div>
+  );
+
+});

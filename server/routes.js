@@ -8,7 +8,7 @@ const model = require('./database/model');
 // search - Youtube search query from which to retrieve comments from the db
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 router.get('/comments', (req, res) => {
-  model.getCommentsBySearchPartial(req.query.search)
+  model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
     .then((results) => {
       // console.log(results);
       if (!results.length) {
@@ -41,7 +41,7 @@ router.post('/comments', (req, res) => {
   axios.get(`${process.env.API_URL}/search`, {
     params: {
       part: 'id',
-      maxResults: 25,
+      maxResults: 50,
       order: 'relevance',
       q: req.body.search,
       key: process.env.API_TOKEN
@@ -80,7 +80,7 @@ router.post('/comments', (req, res) => {
               {
                 commentId: item.id,
                 username: item.snippet.topLevelComment.snippet.authorDisplayName,
-                userId: item.snippet.topLevelComment.snippet.authorChannelId.value,
+                userId: item.snippet.topLevelComment.snippet.authorChannelId.value || 'N/A',
                 text: item.snippet.topLevelComment.snippet.textOriginal,
                 likeCount: item.snippet.topLevelComment.snippet.likeCount,
                 videoId: item.snippet.topLevelComment.snippet.videoId,
@@ -93,7 +93,7 @@ router.post('/comments', (req, res) => {
       return model.saveComments(comments);
     })
     .then((results) => {
-      console.log(results);
+      // console.log(results);
       res.sendStatus(201);
     })
     .catch((error) => {
@@ -101,27 +101,6 @@ router.post('/comments', (req, res) => {
       res.sendStatus(400);
     });
 });
-
-// TESTING POST ROUTE / MODEL
-// router.post('/comments', (req, res) => {
-//   model.saveComments([{
-//     commentId: 'aaaaaaa',
-//     username: 'Commenting Guy',
-//     userId: 'aaaaaa',
-//     text: 'How does the comment go again?',
-//     likeCount: 1000,
-//     videoId: '0EqSXDwTq6U',
-//     search: '-t-'
-//   }])
-//     .then((results) => {
-//       console.log(results);
-//       res.sendStatus(201);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       res.sendStatus(400);
-//     });
-// });
 
 router.get('/searches', (req, res) => {
   model.getAllSearches()

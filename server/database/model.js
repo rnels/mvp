@@ -2,12 +2,12 @@ const Comment = require('./db.js').Comment;
 
 // TODO: Works with partial match now, but want to explore this further
 // to possibly have it partial match only whole words
-module.exports.getCommentsBySearchPartial = (search) => {
-  return Comment.find({search: { $regex: search }});
+module.exports.getCommentsBySearchPartial = (search, likeCount=0) => {
+  return Comment.find({search: { $regex: search }}).where('likeCount').gt(likeCount);
 }
 
-module.exports.getCommentsBySearch = (search) => {
-  return Comment.find({search});
+module.exports.getCommentsBySearch = (search, likeCount=0) => {
+  return Comment.find({search}).where('likeCount').gt(likeCount);
 }
 
 module.exports.saveComments = (comments) => {

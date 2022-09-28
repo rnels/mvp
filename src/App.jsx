@@ -1,4 +1,5 @@
 import './App.css';
+import {ReactComponent as ReactLogo} from './logo.svg';
 import { serverURL } from './config.js';
 import Wordcloud from './components/Wordcloud.jsx';
 
@@ -14,12 +15,13 @@ class App extends React.Component {
       searches: [],
       getSearch: '',
       addSearch: '',
-      minWords: 3,
+      minWords: 2,
       maxWords: 5,
-      minScore: 10,
-      maxScore: 1000,
+      minScore: 5,
+      maxScore: 300,
       filter: '',
       commonWordFilter: true
+      // TODO: Add 'likeCount' filter?
     };
     this.getComments = this.getComments.bind(this);
     this.getSearches = this.getSearches.bind(this);
@@ -28,10 +30,14 @@ class App extends React.Component {
 
   getComments() {
     axios.get(`${serverURL}/comments`, {
-      params: { search: this.state.getSearch }
+      params: {
+        search: this.state.getSearch,
+        likeCount: 3 // Helps filter spam comments
+       }
     })
       .then((result) => {
-        console.log(result.data.comments.length); // DEBUG: Should contain comment text
+        // TODO: Add weights based on comment rating
+        // console.log(result.data.comments.length); // DEBUG: Should contain comment length
         this.setState({comments: result.data.comments});
       })
       .catch((error) => console.log(error));
@@ -40,14 +46,17 @@ class App extends React.Component {
   getSearches() {
     axios.get(`${serverURL}/searches`)
       .then((result) => {
-        console.log(result.data.searches); // DEBUG: Should contain searches
-        this.setState({searches: result.data.searches});
+        // console.log(result.data.searches); // DEBUG: Should contain searches
+        this.setState({
+          searches: result.data.searches,
+          getSearch: this.state.addSearch.length > 0 ? this.state.addSearch : result.data.searches[0]
+        }, () => this.getComments());
       })
       .catch((error) => console.log(error));
   }
 
   submitSearch() {
-    console.log('submitSearch', this.state.addSearch);
+    // console.log('submitSearch', this.state.addSearch);
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then((success) => {
         console.log(success);
@@ -67,74 +76,15 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>Comments</h1>
-        </header>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          this.getComments();
-        }}>
-          <label>
-            Get
-            <input
-              type='text'
-              name='get-search'
-              value={this.state.getSearch}
-              onChange={(e) => this.setState({getSearch: e.target.value})}
-            />
-          </label>
-          <input
-            type='submit'
-            value='Search'
-          />
-        </form>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          this.submitSearch();
-        }}>
-          <label>
-            Add
-            <input
-              type='text'
-              name='add-search'
-              value={this.state.addSearch}
-              onChange={(e) => this.setState({addSearch: e.target.value})}
-            />
-          </label>
-          <input
-            type='submit'
-            value='Add'
-          />
-        </form>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-        }}>
-          <label>
-            Min Words
-            <input
-              type='Number'
-              name='set-min-words'
-              value={this.state.minWords}
-              min={1}
-              max={this.state.maxWords}
-              onChange={(e) => this.setState({minWords: parseInt(e.target.value)})}
-            />
-          </label>
-          <label>
-            Max Words
-            <input
-              type='Number'
-              name='set-max-words'
-              value={this.state.maxWords}
-              min={this.state.minWords}
-              onChange={(e) => this.setState({maxWords: parseInt(e.target.value)})}
-            />
-          </label>
+        <div className='app-left'>
+          <header className="App-header">
+            <h1>Comment Cloud</h1>
+            <ReactLogo />
+          </header>
           <label>
             Saved searches
             <select
             onChange={(e) => {
-              e.preventDefault();
               this.setState({getSearch: e.target.value}, () => this.getComments());
             }}>
               {this.state.searches.map((search) => {
@@ -142,27 +92,91 @@ class App extends React.Component {
               })}
             </select>
           </label>
-        </form>
-        <form>
-          <label>
-            Filter
-            <input
-              type='text'
-              name='filter'
-              value={this.state.filter}
-              onChange={(e) => {this.setState({filter: e.target.value})}}
-            />
-          </label>
-        </form>
-        <label>
-            Filter Common Words
-            <input
-              type='checkbox'
-              name='filter-common-words'
-              checked={this.state.commonWordFilter}
-              onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
-            />
-        </label>
+          <div className='get-add-forms'>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              this.getComments();
+            }}>
+              <label>
+                <input
+                  type='text'
+                  name='get-search'
+                  value={this.state.getSearch}
+                  onChange={(e) => this.setState({getSearch: e.target.value})}
+                />
+                <input
+                  type='submit'
+                  value='Search'
+                />
+              </label>
+            </form>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              this.submitSearch();
+            }}>
+              <label>
+                <input
+                  type='text'
+                  name='add-search'
+                  value={this.state.addSearch}
+                  onChange={(e) => this.setState({addSearch: e.target.value})}
+                />
+                <input
+                  type='submit'
+                  value='Add'
+                />
+              </label>
+            </form>
+          </div>
+          <form>
+            <label>
+              Word Filters
+            </label>
+            <div className='min-max-word-filters'>
+              <label>
+                Min
+                <input
+                  type='Number'
+                  name='set-min-words'
+                  value={this.state.minWords}
+                  min={1}
+                  max={this.state.maxWords}
+                  onChange={(e) => this.setState({minWords: parseInt(e.target.value)})}
+                />
+              </label>
+              <label>
+                Max
+                <input
+                  type='Number'
+                  name='set-max-words'
+                  value={this.state.maxWords}
+                  min={this.state.minWords}
+                  onChange={(e) => this.setState({maxWords: parseInt(e.target.value)})}
+                />
+              </label>
+            </div>
+          </form>
+          <div>
+            <label>
+              Filter
+              <input
+                type='text'
+                name='filter'
+                value={this.state.filter}
+                onChange={(e) => {this.setState({filter: e.target.value})}}
+              />
+            </label>
+            <label>
+                Filter Common Words
+                <input
+                  type='checkbox'
+                  name='filter-common-words'
+                  checked={this.state.commonWordFilter}
+                  onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
+                />
+            </label>
+          </div>
+        </div>
         <Wordcloud
           key={'cloud'}
           comments={this.state.comments}

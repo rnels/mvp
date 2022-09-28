@@ -1,18 +1,13 @@
 .App {
   text-align: center;
-  background-color: #282c34;
+  background-color: #232323;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }
 
 /* .App-header {
@@ -25,16 +20,32 @@
   font-size: calc(10px + 2vmin);
   color: white;
 } */
+/*
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+} */
 
-.App-link {
-  color: #61dafb;
+label {
+  font-size: calc(2px + 2vmin);
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.get-add-forms {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.min-max-word-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
 }
