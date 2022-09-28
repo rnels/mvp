@@ -1,5 +1,5 @@
 {
-  "name": "mvp",
+  "name": "comment-cloud-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,12 +10,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.2",
-    "express": "^4.18.1",
-    "mongoose": "^6.6.2",
-    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -26,11 +20,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-server": "node server/index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server-dev": "npx nodemon server/index.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

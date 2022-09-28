@@ -6,11 +6,11 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Installs dependencies for production
-RUN npm install --omit-dev --force
+RUN npm install --omit-dev
 
 # Bundle app source
 COPY . .
 
 EXPOSE 3001
 
-CMD [ "node", "server/index.js" ]
+CMD [ "node", "index.js" ]

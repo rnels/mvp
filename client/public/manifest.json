@@ -1,6 +1,6 @@
 {
-  "short_name": "Youtube Cloud",
-  "name": "Youtube Cloud",
+  "short_name": "Comment Cloud",
+  "name": "Comment Cloud",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#ececec",
+  "background_color": "#232323"
 }
