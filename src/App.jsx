@@ -1,7 +1,8 @@
 import './App.css';
-import {ReactComponent as ReactLogo} from './logo.svg';
 import { serverURL } from './config.js';
+import { ReactComponent as CloudLogo } from './logo.svg'; // TODO: Have a dark mode where you click the svg to activate it
 import Wordcloud from './components/Wordcloud.jsx';
+import RangeSlider from './components/RangeSlider.jsx';
 
 import React from 'react';
 import axios from 'axios';
@@ -29,6 +30,9 @@ class App extends React.Component {
   }
 
   getComments() {
+    if (this.state.getSearch === '') {
+      return;
+    }
     axios.get(`${serverURL}/comments`, {
       params: {
         search: this.state.getSearch,
@@ -78,115 +82,105 @@ class App extends React.Component {
       <div className="App">
         <div className='app-left'>
           <header className="App-header">
-            <h1>Comment Cloud</h1>
-            <ReactLogo />
+            <h1>Comment</h1>
+              <CloudLogo
+                height='100'
+                width='100'
+              />
+            <h1>Cloud</h1>
           </header>
-          <label>
-            Saved searches
-            <select
-            onChange={(e) => {
-              this.setState({getSearch: e.target.value}, () => this.getComments());
-            }}>
-              {this.state.searches.map((search) => {
-                return <option value={search}>{search}</option>
-              })}
-            </select>
-          </label>
-          <div className='get-add-forms'>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              this.getComments();
-            }}>
+          <div className='main-section-left'>
+            <div className='search-inputs'>
+              <h3>Search</h3>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                this.submitSearch();
+              }}>
+                <label>
+                  <input
+                    type='text'
+                    name='add-search'
+                    value={this.state.addSearch}
+                    onChange={(e) => this.setState({addSearch: e.target.value})}
+                  />
+                  <button
+                    type='submit'
+                    name='Add'
+                  >Add New</button>
+                </label>
+              </form>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                this.getComments();
+              }}>
+                <label>
+                  <input
+                    type='text'
+                    name='get-search'
+                    value={this.state.getSearch}
+                    onChange={(e) => this.setState({getSearch: e.target.value})}
+                  />
+                  <button
+                    type='submit'
+                    name='Search'
+                  >Search</button>
+                </label>
+                </form>
               <label>
-                <input
-                  type='text'
-                  name='get-search'
-                  value={this.state.getSearch}
-                  onChange={(e) => this.setState({getSearch: e.target.value})}
-                />
-                <input
-                  type='submit'
-                  value='Search'
-                />
-              </label>
-            </form>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              this.submitSearch();
-            }}>
-              <label>
-                <input
-                  type='text'
-                  name='add-search'
-                  value={this.state.addSearch}
-                  onChange={(e) => this.setState({addSearch: e.target.value})}
-                />
-                <input
-                  type='submit'
-                  value='Add'
-                />
-              </label>
-            </form>
-          </div>
-          <form>
-            <label>
-              Word Filters
-            </label>
-            <div className='min-max-word-filters'>
-              <label>
-                Min
-                <input
-                  type='Number'
-                  name='set-min-words'
-                  value={this.state.minWords}
-                  min={1}
-                  max={this.state.maxWords}
-                  onChange={(e) => this.setState({minWords: parseInt(e.target.value)})}
-                />
-              </label>
-              <label>
-                Max
-                <input
-                  type='Number'
-                  name='set-max-words'
-                  value={this.state.maxWords}
-                  min={this.state.minWords}
-                  onChange={(e) => this.setState({maxWords: parseInt(e.target.value)})}
-                />
+                Past Searches
+                <select
+                onChange={(e) => {
+                  this.setState({getSearch: e.target.value}, () => this.getComments());
+                }}>
+                  {this.state.searches.map((search) => {
+                    return <option value={search} key={search}>{search}</option>
+                  })}
+                </select>
               </label>
             </div>
-          </form>
-          <div>
-            <label>
-              Filter
-              <input
-                type='text'
-                name='filter'
-                value={this.state.filter}
-                onChange={(e) => {this.setState({filter: e.target.value})}}
+            <div className='word-filters'>
+              <h3>Filters</h3>
+              <RangeSlider
+                onSubmit={(minWords, maxWords) => {
+                  this.setState({
+                    minWords,
+                    maxWords
+                  });
+                }}
+                minWords={this.state.minWords}
+                maxWords={this.state.maxWords}
               />
-            </label>
-            <label>
-                Filter Common Words
+              <label>
+                Includes
+                <input
+                  type='text'
+                  name='filter'
+                  value={this.state.filter}
+                  onChange={(e) => {this.setState({filter: e.target.value})}}
+                />
+              </label>
+              <label>
+                <small>Filter Common Words</small>
                 <input
                   type='checkbox'
                   name='filter-common-words'
                   checked={this.state.commonWordFilter}
                   onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
                 />
-            </label>
+              </label>
+            </div>
           </div>
         </div>
-        <Wordcloud
-          key={'cloud'}
-          comments={this.state.comments}
-          minWords={this.state.minWords}
-          maxWords={this.state.maxWords}
-          minScore={this.state.minScore}
-          maxScore={this.state.maxScore}
-          filter={this.state.filter}
-          commonWordFilter={this.state.commonWordFilter}
-        />
+          <Wordcloud
+            key={'cloud'}
+            comments={this.state.comments}
+            minWords={this.state.minWords}
+            maxWords={this.state.maxWords}
+            minScore={this.state.minScore}
+            maxScore={this.state.maxScore}
+            filter={this.state.filter}
+            commonWordFilter={this.state.commonWordFilter}
+          />
       </div>
     );
   }

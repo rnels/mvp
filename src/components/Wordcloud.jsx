@@ -4,6 +4,14 @@ import { memo } from 'react';
 
 export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter}) {
 
+  if (!comments.length) {
+    return (
+      <div className='wordcloud'>
+        <h3>Search something</h3>
+      </div>
+    )
+  }
+
   let temp = {};
   // Forgive me
   let regex = [
@@ -141,7 +149,7 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
     transitionDuration: 1000
   };
   const size = [
-    window.innerWidth > 750 ? window.innerWidth * 0.50 : window.innerWidth * 0.95,
+    window.innerWidth > 750 ? window.innerWidth * 0.40 : window.innerWidth * 0.95,
     window.innerHeight * 0.50
   ];
 

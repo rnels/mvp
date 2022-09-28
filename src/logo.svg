@@ -1,87 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
-"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg
-   id="svg1"
-   sodipodi:version="0.32"
-   inkscape:version="0.38.1"
-   width="80.000000pt"
-   height="80.000000pt"
-   sodipodi:docbase="/home/nicu/Desktop/weather"
-   sodipodi:docname="cloud.svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs
-     id="defs3">
-    <linearGradient
-       id="linearGradient912">
-      <stop
-         style="stop-color:#f3f3f3;stop-opacity:1.0000000;"
-         offset="0.0000000"
-         id="stop913" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1.0000000;"
-         offset="0.37650406"
-         id="stop855" />
-      <stop
-         style="stop-color:#e6ffff;stop-opacity:1.0000000;"
-         offset="1.0000000"
-         id="stop914" />
-    </linearGradient>
-    <radialGradient
-       xlink:href="#linearGradient912"
-       id="radialGradient915" />
-    <linearGradient
-       xlink:href="#linearGradient912"
-       id="linearGradient854"
-       x1="0.90873015"
-       y1="0.63281250"
-       x2="-0.47619048"
-       y2="-0.14062500" />
-  </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="6.4980192"
-     inkscape:cx="34.249855"
-     inkscape:cy="31.909439"
-     inkscape:window-width="809"
-     inkscape:window-height="630"
-     inkscape:window-x="39"
-     inkscape:window-y="118" />
-  <path
-     style="fill:url(#linearGradient854);fill-rule:evenodd;stroke:#000000;stroke-width:1.2500000;stroke-dasharray:none;stroke-linejoin:round;"
-     d="M 48.996171,37.251271 C 47.958668,32.143973 39.185631,24.658486 33.930828,26.057885 C 27.350244,27.875054 24.319102,33.750906 29.022229,38.180278 C 24.861109,35.364180 14.478948,32.941167 8.8516150,42.752305 C 5.3584330,50.061076 15.250525,54.633620 18.276730,54.093064 C 12.486132,53.396616 -1.7806601,65.306814 4.5717298,71.373662 C 12.398859,77.540434 30.328023,70.871946 31.115271,65.721140 C 29.368597,73.253219 49.289455,74.699245 49.782264,64.230844 C 48.360488,69.138884 62.574082,74.362572 69.331408,72.364112 C 77.800433,70.297826 76.782138,63.322187 75.780037,61.195189 C 82.294178,61.939711 92.493777,63.786015 97.011836,57.091162 C 100.16106,50.764622 98.288765,43.698338 94.234782,41.475620 C 89.817633,39.373843 84.991240,39.483372 79.361925,43.043469 C 83.828729,40.136070 81.073796,30.760619 76.597083,28.701006 C 71.495048,26.361815 65.365281,25.905286 59.859869,27.042626 C 55.323516,27.769206 48.144478,31.594752 48.996171,37.251271 z "
-     id="path853"
-     sodipodi:nodetypes="cccccccccccccccc" />
-
-  <rdf:RDF 
-   xmlns="http://web.resource.org/cc/"
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <Work rdf:about="">
-    <dc:title>Clipart by Nicu Buculei - w_cloud</dc:title>
-    <dc:rights>
-       <Agent>
-         <dc:title>Nicu Buculei</dc:title>
-       </Agent>
-    </dc:rights>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-    <license rdf:resource="http://web.resource.org/cc/PublicDomain" />
-  </Work>
-   
-  <License rdf:about="http://web.resource.org/cc/PublicDomain">
-     <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
-     <permits rdf:resource="http://web.resource.org/cc/Distribution" />
-     <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
-  </License>
-
-</rdf:RDF>
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="200.000000pt" height="200.000000pt" viewBox="0 0 1280.000000 754.000000"
+ preserveAspectRatio="xMidYMid meet">
+<metadata>
+Created by potrace 1.15, written by Peter Selinger 2001-2017
+</metadata>
+<g transform="translate(0.000000,754.000000) scale(0.100000,-0.100000)"
+fill="#ececec" stroke="none">
+<path d="M6555 7530 c-959 -88 -1868 -731 -2340 -1655 -64 -125 -145 -321
+-190 -462 l-26 -82 -32 19 c-18 10 -72 32 -122 49 -335 112 -732 4 -1010 -274
+-185 -184 -295 -418 -336 -712 -7 -51 -15 -93 -18 -93 -3 0 -44 7 -91 16 -133
+24 -457 30 -620 10 -693 -83 -1263 -442 -1574 -993 -123 -219 -181 -420 -192
+-667 -16 -354 91 -725 293 -1009 32 -45 114 -138 183 -207 337 -339 725 -530
+1245 -612 48 -7 175 -12 315 -12 237 0 301 6 495 46 189 38 391 106 537 179
+43 22 82 39 87 39 5 0 12 -12 16 -27 11 -48 65 -164 117 -256 357 -629 1081
+-939 1708 -731 223 74 406 187 598 369 l108 103 46 -24 c167 -85 391 -151 601
+-179 444 -57 920 63 1286 326 l84 60 101 -99 c358 -350 781 -557 1291 -633
+136 -20 492 -17 635 5 418 65 789 227 1105 483 167 135 359 344 449 491 32 51
+69 100 82 109 20 13 56 16 182 18 203 2 310 27 483 115 353 178 619 527 717
+943 24 102 26 130 26 312 -1 166 -5 217 -23 302 -113 534 -497 943 -1000 1065
+-110 26 -332 29 -431 4 -36 -8 -77 -16 -92 -16 -35 0 -84 43 -145 127 -63 86
+-262 258 -413 357 -221 146 -497 265 -789 340 l-125 32 -22 155 c-38 265 -96
+484 -191 724 -171 433 -413 795 -750 1126 -323 317 -670 536 -1065 674 -180
+63 -307 92 -583 135 -92 14 -495 21 -610 10z"/>
+</g>
 </svg>
