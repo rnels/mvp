@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/comments');
+mongoose.connect(`${process.env.DB_HOST}/comments`, {
+  user: process.env.DB_USER,
+  pass: process.env.DB_PW
+});
 
 console.log('MongoDB connected');
 
