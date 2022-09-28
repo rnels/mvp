@@ -1,6 +1,7 @@
 import './App.css';
 import { serverURL } from './config.js';
-import { ReactComponent as CloudLogo } from './logo.svg'; // TODO: Have a dark mode where you click the svg to activate it
+import CloudLogo from './components/CloudLogo.jsx';
+
 import Wordcloud from './components/Wordcloud.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
 
@@ -21,7 +22,8 @@ class App extends React.Component {
       minScore: 5,
       maxScore: 300,
       filter: '',
-      commonWordFilter: true
+      commonWordFilter: true,
+      loading: false
       // TODO: Add 'likeCount' filter?
     };
     this.getComments = this.getComments.bind(this);
@@ -30,6 +32,7 @@ class App extends React.Component {
   }
 
   getComments() {
+    if (!this.state.loading) this.setState({loading: true});
     if (this.state.getSearch === '') {
       return;
     }
@@ -42,9 +45,15 @@ class App extends React.Component {
       .then((result) => {
         // TODO: Add weights based on comment rating
         // console.log(result.data.comments.length); // DEBUG: Should contain comment length
-        this.setState({comments: result.data.comments});
+        this.setState({
+          comments: result.data.comments,
+          loading: false
+        });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        this.setState({loading: false});
+      });
   }
 
   getSearches() {
@@ -54,19 +63,23 @@ class App extends React.Component {
         this.setState({
           searches: result.data.searches,
           getSearch: this.state.addSearch.length > 0 ? this.state.addSearch : result.data.searches[0]
-        }, () => this.getComments());
+        }, this.getComments);
       })
       .catch((error) => console.log(error));
   }
 
   submitSearch() {
     // console.log('submitSearch', this.state.addSearch);
+    if (!this.state.loading) this.setState({loading: true});
+
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then((success) => {
-        console.log(success);
         this.getSearches();
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        this.setState({loading: false});
+        console.log(error)
+      });
   }
 
   componentDidMount() {
@@ -84,8 +97,7 @@ class App extends React.Component {
           <header className="App-header">
             <h1>Comment</h1>
               <CloudLogo
-                height='100'
-                width='100'
+                loading={this.state.loading}
               />
             <h1>Cloud</h1>
           </header>
@@ -130,7 +142,7 @@ class App extends React.Component {
                 Past Searches
                 <select
                 onChange={(e) => {
-                  this.setState({getSearch: e.target.value}, () => this.getComments());
+                  this.setState({getSearch: e.target.value}, this.getComments);
                 }}>
                   {this.state.searches.map((search) => {
                     return <option value={search} key={search}>{search}</option>
@@ -162,6 +174,7 @@ class App extends React.Component {
               <label>
                 <small>Filter Common Words</small>
                 <input
+                  className='checkbox'
                   type='checkbox'
                   name='filter-common-words'
                   checked={this.state.commonWordFilter}

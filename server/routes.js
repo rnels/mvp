@@ -80,7 +80,7 @@ router.post('/comments', (req, res) => {
               {
                 commentId: item.id,
                 username: item.snippet.topLevelComment.snippet.authorDisplayName,
-                userId: item.snippet.topLevelComment.snippet.authorChannelId.value || 'N/A',
+                userId: item.snippet.topLevelComment.snippet.authorChannelId ? item.snippet.topLevelComment.snippet.authorChannelId.value : 'N/A',
                 text: item.snippet.topLevelComment.snippet.textOriginal,
                 likeCount: item.snippet.topLevelComment.snippet.likeCount,
                 videoId: item.snippet.topLevelComment.snippet.videoId,

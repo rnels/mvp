@@ -10,6 +10,7 @@
   color: #ececec;
   padding-left: 50px;
   padding-right: 50px;
+  gap: 20px;
 }
 
 .App-header {
@@ -19,21 +20,19 @@
   gap: 20px;
 }
 
-.app-left {
-  /* border-style: solid;
-  border-width: 1px; */
-
+/* .app-left {
+  border-style: solid;
+  border-width: 1px;
 }
 
 .wordcloud {
-  /* border-style: solid;
-  border-width: 1px; */
-}
+  border-style: solid;
+  border-width: 1px;
+} */
 
 label {
   font-size: calc(5px + 1.2vmin);
   display: flex;
-  justify-content: flex-start;
   align-items: center;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -72,6 +71,10 @@ input, select {
   border: 1px solid #ececec;
 }
 
+input.checkbox {
+  width: 1rem;
+}
+
 button {
   /* border-radius: 5px; */
   padding: 0.5rem 0;
@@ -89,4 +92,42 @@ small {
 h3 {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+/* The animation code */
+@keyframes red-pulse {
+  from {fill: #ececec;}
+  to {fill: #FF0000;}
+}
+
+.cloud-logo {
+  fill: #ececec;
+  /* animation-name: red-pulse;
+  animation-duration: 4s;
+  animation-iteration-count: 2;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out; */
+}
+
+.cloud-logo-enter {
+  fill: #ececec;
+}
+.cloud-logo-enter-active {
+  fill: #FF0000;
+  transition: fill 2500ms;
+  transition-timing-function: ease-in-out;
+}
+.cloud-logo-enter-done {
+  fill: #FF0000;
+}
+.cloud-logo-exit {
+  fill: #FF0000;
+}
+.cloud-logo-exit-active {
+  fill: #ececec;
+  transition: fill 2500ms;
+  transition-timing-function: ease-in-out;
+}
+.cloud-logo-exit-done {
+  fill: #ececec;
 }
