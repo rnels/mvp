@@ -129,6 +129,7 @@ class App extends React.Component {
                     <button
                       type='submit'
                       name='Send'
+                      disabled={this.state.addSearch.length === 0}
                     >Send</button>
                 </form>
               </div>

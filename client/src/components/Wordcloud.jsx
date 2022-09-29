@@ -87,25 +87,29 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
   }
 
   for (let key in temp) {
-    if (bottomScore === null) {
-      bottomScore = temp[key];
-    } else if (bottomScore > temp[key]) {
-      bottomScore = temp[key];
-    }
-    if (topScore === null) {
-      topScore = temp[key];
-    } else if (topScore < temp[key]) {
-      topScore = temp[key];
-    }
-    if (temp[key] >= minScore && temp[key] <= maxScore && key.includes(filter)) {
-      words.push({
-        text: key,
-        value: temp[key]
-      })
+    if (key.includes(filter)) {
+      if (bottomScore === null) {
+        bottomScore = temp[key];
+      } else if (bottomScore > temp[key]) {
+        bottomScore = temp[key];
+      }
+      if (topScore === null) {
+        topScore = temp[key];
+      } else if (topScore < temp[key]) {
+        topScore = temp[key];
+      }
+      if (temp[key] >= minScore && temp[key] <= maxScore) {
+        words.push({
+          text: key,
+          value: temp[key]
+        })
+      }
     }
   }
 
-  if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
+  if (bottomScore !== null && topScore !== null) {
+    setScoreRange(bottomScore, topScore);
+   }
 
   return (
     <div className='wordcloud'>
