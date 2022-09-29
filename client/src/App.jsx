@@ -128,9 +128,17 @@ class App extends React.Component {
                   </label>
                     <button
                       type='submit'
-                      name='Send'
-                      disabled={this.state.addSearch.length === 0}
-                    >Send</button>
+                      name='submit-search'
+                      style={this.state.addSearch.length < 3 ? null : {
+                        'animation-name': 'button-enabled',
+                        'animation-duration': '0.5s',
+                        'animation-iteration-count': '1',
+                        'animation-timing-function': 'ease-in-out',
+                        'animation-fill-mode': 'forwards'
+
+                      }}
+                      disabled={this.state.addSearch.length < 3}
+                    >Submit</button>
                 </form>
               </div>
               <div className='search-cloud'>
