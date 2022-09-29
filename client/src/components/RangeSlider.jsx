@@ -17,7 +17,6 @@ export default function RangeSlider({onSubmit, minWords, maxWords}) {
         max={6}
         step={1}
         onChange={(e) => {
-          console.log(e.target.value);
           setRange([e.target.value[0], e.target.value[1]]);
         }}
         onChangeCommitted={() => {

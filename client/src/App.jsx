@@ -7,6 +7,7 @@ import RangeSlider from './components/RangeSlider.jsx';
 import RangeSliderScores from './components/RangeSliderScores.jsx';
 
 import React from 'react';
+import Select from 'react-select';
 import axios from 'axios';
 
 class App extends React.Component {
@@ -19,7 +20,7 @@ class App extends React.Component {
       getSearch: '',
       addSearch: '',
       minWords: 2,
-      maxWords: 5,
+      maxWords: 3,
       minScore: 1,
       maxScore: 5000,
       bottomScore: 0,
@@ -31,18 +32,15 @@ class App extends React.Component {
     };
     this.getComments = this.getComments.bind(this);
     this.getSearches = this.getSearches.bind(this);
-    this.submitSearch = this.submitSearch.bind(this);
+    this.addSearchSubmit = this.addSearchSubmit.bind(this);
     this.setScoreRange = this.setScoreRange.bind(this);
   }
 
-  getComments() {
+  getComments(search) {
     if (!this.state.loading) this.setState({loading: true});
-    if (this.state.getSearch === '') {
-      return;
-    }
     axios.get(`${serverURL}/comments`, {
       params: {
-        search: this.state.getSearch,
+        search,
         likeCount: 3 // Helps filter spam comments
        }
     })
@@ -52,7 +50,7 @@ class App extends React.Component {
         this.setState({
           comments: result.data.comments,
           loading: false
-        });
+        }, this.getSearches);
       })
       .catch((error) => {
         console.log(error);
@@ -61,23 +59,31 @@ class App extends React.Component {
   }
 
   getSearches() {
+    console.log('getSearches')
+    console.log('loading:', this.state.loading)
     axios.get(`${serverURL}/searches`)
       .then((result) => {
         // console.log(result.data.searches); // DEBUG: Should contain searches
+        console.log('getSearches result')
+        console.log('loading:', this.state.loading)
         this.setState({
           searches: result.data.searches,
-          getSearch: this.state.addSearch.length > 0 ? this.state.addSearch : result.data.searches[0]
-        }, this.getComments);
+        });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+      });
   }
 
-  submitSearch() {
-    // console.log('submitSearch', this.state.addSearch);
+  addSearchSubmit() {
+    console.log('addSearchSubmit')
+    console.log('loading:', this.state.loading)
     if (!this.state.loading) this.setState({loading: true});
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then((success) => {
-        this.getSearches();
+        console.log('addSearchSubmit result')
+        console.log('loading:', this.state.loading)
+        this.getComments(this.state.addSearch);
       })
       .catch((error) => {
         this.setState({loading: false});
@@ -93,7 +99,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // this.setState({addSearch: 'how to use the youtube API'}, () => this.submitSearch()) // DEBUG
+    // this.setState({addSearch: 'how to use the youtube API'}, () => this.addSearchSubmit()) // DEBUG
     // this.setState({getSearch: 'how to use the youtube API'}, () => this.getComments()) // DEBUG
     this.getSearches();
   }
@@ -112,53 +118,55 @@ class App extends React.Component {
             <h1>Cloud</h1>
           </header>
           <div className='main-section-left'>
-            <div className='search-inputs'>
-              <h3>Search</h3>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                this.submitSearch();
-              }}>
-                <label>
-                  <input
-                    type='text'
-                    name='add-search'
-                    value={this.state.addSearch}
-                    onChange={(e) => this.setState({addSearch: e.target.value})}
-                  />
-                  <button
-                    type='submit'
-                    name='Add'
-                  >Add New</button>
-                </label>
-              </form>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                this.getComments();
-              }}>
-                <label>
-                  <input
-                    type='text'
-                    name='get-search'
-                    value={this.state.getSearch}
-                    onChange={(e) => this.setState({getSearch: e.target.value})}
-                  />
-                  <button
-                    type='submit'
-                    name='Search'
-                  >Search</button>
-                </label>
+            <div className='create-search-section'>
+              <div className='create-cloud'>
+                <h3>Create</h3>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  this.addSearchSubmit();
+                }}>
+                  <label>
+                    <input
+                      type='text'
+                      name='add-search'
+                      value={this.state.addSearch.length > 0 ? this.state.addSearch : null}
+                      placeholder='Enter a search query'
+                      onChange={(e) => this.setState({addSearch: e.target.value})}
+                    />
+                  </label>
+                    <button
+                      type='submit'
+                      name='Send'
+                    >Send</button>
                 </form>
-              <label>
-                Past Searches
+              </div>
+              <div className='search-cloud'>
+                <h3>Search</h3>
                 <select
                 onChange={(e) => {
-                  this.setState({getSearch: e.target.value}, this.getComments);
+                  this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
                 }}>
+                  {<option value="" disabled selected/>}
                   {this.state.searches.map((search) => {
                     return <option value={search} key={search}>{search}</option>
                   })}
                 </select>
-              </label>
+                {/* <Select
+                  options={
+                    this.state.searches.map((search) => {
+                      return {
+                        label: search,
+                        value: search
+                      }
+                    })
+                  }
+                  onChange={(option) => {
+                    this.setState({getSearch: option.value}, () => this.getComments(this.state.getSearch));
+                  }}
+                  className='custom-select'
+                /> */}
+              </div>
+
             </div>
             <div className='word-filters'>
               <h3>Filters</h3>
@@ -186,39 +194,37 @@ class App extends React.Component {
                 bottomScore={this.state.bottomScore}
                 topScore={this.state.topScore}
               />
+              <input
+                type='text'
+                name='filter'
+                placeholder='Filter by words'
+                value={this.state.filter}
+                onChange={(e) => {this.setState({filter: e.target.value})}}
+              />
               <label>
-                Includes
                 <input
-                  type='text'
-                  name='filter'
-                  value={this.state.filter}
-                  onChange={(e) => {this.setState({filter: e.target.value})}}
-                />
-              </label>
-              <label>
-                <small>Filter Common Words</small>
-                <input
-                  className='checkbox'
-                  type='checkbox'
-                  name='filter-common-words'
-                  checked={this.state.commonWordFilter}
-                  onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
-                />
+                    className='checkmark'
+                    type='checkbox'
+                    name='filter-common-words'
+                    checked={this.state.commonWordFilter}
+                    onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
+                  />
+                <small>Filter stop words</small>
               </label>
             </div>
           </div>
         </div>
-          <Wordcloud
-            key={'cloud'}
-            comments={this.state.comments}
-            minWords={this.state.minWords}
-            maxWords={this.state.maxWords}
-            minScore={this.state.minScore}
-            maxScore={this.state.maxScore}
-            filter={this.state.filter}
-            commonWordFilter={this.state.commonWordFilter}
-            setScoreRange={this.setScoreRange}
-          />
+        <Wordcloud
+          key={'cloud'}
+          comments={this.state.comments}
+          minWords={this.state.minWords}
+          maxWords={this.state.maxWords}
+          minScore={this.state.minScore}
+          maxScore={this.state.maxScore}
+          filter={this.state.filter}
+          commonWordFilter={this.state.commonWordFilter}
+          setScoreRange={this.setScoreRange}
+        />
       </div>
     );
   }

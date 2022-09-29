@@ -5,10 +5,60 @@ import { removeStopwords } from 'stopword';
 
 export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter, setScoreRange}) {
 
+  const words = [];
+  const options = {
+    colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
+    enableTooltip: true,
+    deterministic: false,
+    fontFamily: "Arial",
+    fontSizes: [10, 40],
+    fontStyle: "normal",
+    fontWeight: "normal",
+    padding: 1,
+    rotations: 10,
+    rotationAngles: [-25, 25],
+    scale: "sqrt",
+    spiral: "archimedean",
+    transitionDuration: 1000
+  };
+  const size = [
+    window.innerWidth > 750 ? window.innerWidth * 0.50 : window.innerWidth * 0.95,
+    window.innerHeight * 0.60
+  ];
+
+  let bottomScore = null;
+  let topScore = null;
+
   if (!comments.length) {
+    let textChoices = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
+    for (let i = 0; i < 50; i++) {
+      let choice = Math.round(Math.random() * 12);
+      let value = Math.round(Math.random() * 100);
+      if (bottomScore === null) {
+        bottomScore = value;
+      } else if (bottomScore > value) {
+        bottomScore = value;
+      }
+      if (topScore === null) {
+        topScore = value;
+      } else if (topScore < value) {
+        topScore = value;
+      }
+      words.push({
+        text: textChoices[choice],
+        value
+      })
+    }
+
+    if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
+
     return (
       <div className='wordcloud'>
-        <h3>Search something</h3>
+        <ReactWordcloud
+          words={words}
+          options={options}
+          size={size}
+        />
       </div>
     )
   }
@@ -36,10 +86,6 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
     }
   }
 
-  let words = [];
-  let bottomScore = null;
-  let topScore = null;
-
   for (let key in temp) {
     if (bottomScore === null) {
       bottomScore = temp[key];
@@ -60,26 +106,6 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
   }
 
   if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
-
-  const options = {
-    colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
-    enableTooltip: true,
-    deterministic: false,
-    fontFamily: "Arial",
-    fontSizes: [10, 40],
-    fontStyle: "normal",
-    fontWeight: "normal",
-    padding: 1,
-    rotations: 4,
-    rotationAngles: [-40, 40],
-    scale: "sqrt",
-    spiral: "archimedean",
-    transitionDuration: 1000
-  };
-  const size = [
-    window.innerWidth > 750 ? window.innerWidth * 0.50 : window.innerWidth * 0.95,
-    window.innerHeight * 0.60
-  ];
 
   return (
     <div className='wordcloud'>
