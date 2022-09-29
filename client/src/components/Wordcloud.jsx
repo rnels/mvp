@@ -78,7 +78,7 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
         let phrase = split.slice(j, j + z).join(' ');
         if (phrase.length > 2) { // Exclude phrases under 3 characters
           if (!temp[phrase]) {
-            temp[phrase] = 1;
+            temp[phrase] = 0;
           }
           temp[phrase] += 1;
         }
