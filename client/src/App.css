@@ -7,8 +7,8 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: #ececec;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
   gap: 20px;
 }
 
@@ -38,7 +38,6 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 6px;
   margin-bottom: 6px;
   gap: 5px;
 }
@@ -188,7 +187,7 @@ small {
 
 h3 {
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 /* The animation code */

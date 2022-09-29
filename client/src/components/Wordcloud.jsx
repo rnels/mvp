@@ -22,8 +22,8 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
     transitionDuration: 1000
   };
   const size = [
-    window.innerWidth > 750 ? window.innerWidth * 0.50 : window.innerWidth * 0.95,
-    window.innerHeight * 0.60
+    window.innerWidth > 1100 ? window.innerWidth * 0.40 : window.innerWidth * 0.80,
+    window.innerWidth > 1100 ? window.innerHeight * 0.60 : window.innerHeight * 0.50
   ];
 
   let bottomScore = null;

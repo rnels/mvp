@@ -7,7 +7,7 @@ import RangeSlider from './components/RangeSlider.jsx';
 import RangeSliderScores from './components/RangeSliderScores.jsx';
 
 import React from 'react';
-import Select from 'react-select';
+// import Select from 'react-select';
 import axios from 'axios';
 
 class App extends React.Component {
@@ -59,13 +59,9 @@ class App extends React.Component {
   }
 
   getSearches() {
-    console.log('getSearches')
-    console.log('loading:', this.state.loading)
     axios.get(`${serverURL}/searches`)
       .then((result) => {
         // console.log(result.data.searches); // DEBUG: Should contain searches
-        console.log('getSearches result')
-        console.log('loading:', this.state.loading)
         this.setState({
           searches: result.data.searches,
         });
@@ -76,13 +72,9 @@ class App extends React.Component {
   }
 
   addSearchSubmit() {
-    console.log('addSearchSubmit')
-    console.log('loading:', this.state.loading)
     if (!this.state.loading) this.setState({loading: true});
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then((success) => {
-        console.log('addSearchSubmit result')
-        console.log('loading:', this.state.loading)
         this.getComments(this.state.addSearch);
       })
       .catch((error) => {
@@ -129,7 +121,7 @@ class App extends React.Component {
                     <input
                       type='text'
                       name='add-search'
-                      value={this.state.addSearch.length > 0 ? this.state.addSearch : null}
+                      value={this.state.addSearch.length > 0 ? this.state.addSearch : ''}
                       placeholder='Enter a search query'
                       onChange={(e) => this.setState({addSearch: e.target.value})}
                     />
@@ -145,8 +137,9 @@ class App extends React.Component {
                 <select
                 onChange={(e) => {
                   this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
-                }}>
-                  {<option value="" disabled selected/>}
+                }}
+                >
+                  {<option value=' ' key='defaut-option' disabled selected/>}
                   {this.state.searches.map((search) => {
                     return <option value={search} key={search}>{search}</option>
                   })}
@@ -166,7 +159,6 @@ class App extends React.Component {
                   className='custom-select'
                 /> */}
               </div>
-
             </div>
             <div className='word-filters'>
               <h3>Filters</h3>
@@ -201,7 +193,7 @@ class App extends React.Component {
                 value={this.state.filter}
                 onChange={(e) => {this.setState({filter: e.target.value})}}
               />
-              <label>
+              <label style={{'margin-top': '6px'}}>
                 <input
                     className='checkmark'
                     type='checkbox'
