@@ -253,9 +253,9 @@ h3 {
 }
 
 .MuiSlider-thumb {
-  outline-style: solid!important;
-  outline-width: 2px!important;
-  outline-color: #ececec!important;
+  border-style: solid!important;
+  border-width: 2px!important;
+  border-color: #ececec!important;
   color: #232323!important;
   box-shadow: 0px 0px 8px #999999!important;
 }
@@ -276,4 +276,12 @@ h3 {
     flex-direction: column;
     align-content: center;
   }
+  .MuiSlider-thumb {
+    border-style: none!important;
+    color: #ececec!important;
+  }
+  .cloud-logo {
+    display: none;
+  }
+
 }

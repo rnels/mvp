@@ -134,34 +134,36 @@ class App extends React.Component {
               </div>
               <div className='search-cloud'>
                 <h3>Search</h3>
-                <select
-                onChange={(e) => {
-                  this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
-                }}
-                >
-                  {<option value=' ' key='defaut-option' disabled selected/>}
-                  {this.state.searches.map((search) => {
-                    return <option value={search} key={search}>{search}</option>
-                  })}
-                </select>
-                {/* <Select
-                  options={
-                    this.state.searches.map((search) => {
-                      return {
-                        label: search,
-                        value: search
-                      }
-                    })
-                  }
-                  onChange={(option) => {
-                    this.setState({getSearch: option.value}, () => this.getComments(this.state.getSearch));
+                <form>
+                  <select
+                  onChange={(e) => {
+                    this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
                   }}
-                  className='custom-select'
-                /> */}
+                  >
+                    {<option value=' ' key='defaut-option' disabled selected/>}
+                    {this.state.searches.map((search) => {
+                      return <option value={search} key={search}>{search}</option>
+                    })}
+                  </select>
+                  {/* <Select
+                    options={
+                      this.state.searches.map((search) => {
+                        return {
+                          label: search,
+                          value: search
+                        }
+                      })
+                    }
+                    onChange={(option) => {
+                      this.setState({getSearch: option.value}, () => this.getComments(this.state.getSearch));
+                    }}
+                    className='custom-select'
+                  /> */}
+                </form>
               </div>
             </div>
             <div className='word-filters'>
-              <h3>Filters</h3>
+              <h3>Filter</h3>
               <RangeSlider
                 key='count-slider'
                 onSubmit={(minWords, maxWords) => {
