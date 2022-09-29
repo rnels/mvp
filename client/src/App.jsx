@@ -195,7 +195,7 @@ class App extends React.Component {
                   name='filter'
                   placeholder='Filter by words'
                   value={this.state.filter}
-                  onChange={(e) => {this.setState({filter: e.target.value})}}
+                  onChange={(e) => {this.setState({filter: e.target.value.toLowerCase()})}}
                 />
                 <label style={{'margin-top': '6px'}}>
                   <input
