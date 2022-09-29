@@ -141,7 +141,7 @@ class App extends React.Component {
                     this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
                   }}
                   >
-                    {<option value=' ' key='defaut-option' disabled selected/>}
+                    {<option value='' key='default-option' disabled selected>See past searches</option>}
                     {this.state.searches.map((search) => {
                       return <option value={search} key={search}>{search}</option>
                     })}

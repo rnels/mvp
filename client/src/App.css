@@ -1,4 +1,5 @@
 .App {
+  box-sizing: border-box;
   background-color: #232323;
   min-height: 100vh;
   display: flex;
@@ -10,6 +11,7 @@
   padding-left: 10px;
   padding-right: 10px;
   gap: 20px;
+  width: 100%
 }
 
 .App-header {
@@ -37,7 +39,7 @@ form {
 }
 
 label {
-  font-size: calc(5px + 2vmin);
+  font-size: 16pt;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,7 +95,7 @@ input, select {
   background: transparent;
   color: #ececec;
   border: 1px solid #ececec;
-  font-size: calc(5px + 1.2vmin);
+  font-size: 12pt;
   /* box-shadow: 0px 0px 5px #999999; */
 }
 
@@ -119,6 +121,10 @@ input.checkmark {
   box-shadow: 0px 0px 0px #999999;
   padding: 0;
   margin: 0;
+}
+
+select {
+  background-color: #232323;
 }
 
 /* .custom-select {
@@ -196,6 +202,7 @@ small {
 }
 
 h3 {
+  font-size: 24pt;
   margin-top: 0;
   margin-bottom: 10px;
 }
@@ -275,6 +282,22 @@ h3 {
     padding-right: 5px;
   }
 
+  .App-header {
+    margin-top: 20px;
+    gap: 0px;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  h1{
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .cloud-logo {
+    order: 1;
+  }
+
   form {
     display: flex;
     flex-direction: column;
@@ -290,10 +313,6 @@ h3 {
   .MuiSlider-thumb {
     border-style: none!important;
     color: #ececec!important;
-  }
-
-  .cloud-logo {
-    display: none;
   }
 
 }
