@@ -186,23 +186,25 @@ class App extends React.Component {
                 bottomScore={this.state.bottomScore}
                 topScore={this.state.topScore}
               />
-              <input
-                type='text'
-                name='filter'
-                placeholder='Filter by words'
-                value={this.state.filter}
-                onChange={(e) => {this.setState({filter: e.target.value})}}
-              />
-              <label style={{'margin-top': '6px'}}>
+              <form>
                 <input
-                    className='checkmark'
-                    type='checkbox'
-                    name='filter-common-words'
-                    checked={this.state.commonWordFilter}
-                    onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
-                  />
-                <small>Filter stop words</small>
-              </label>
+                  type='text'
+                  name='filter'
+                  placeholder='Filter by words'
+                  value={this.state.filter}
+                  onChange={(e) => {this.setState({filter: e.target.value})}}
+                />
+                <label style={{'margin-top': '6px'}}>
+                  <input
+                      className='checkmark'
+                      type='checkbox'
+                      name='filter-common-words'
+                      checked={this.state.commonWordFilter}
+                      onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
+                    />
+                  <small>Filter stop words</small>
+                </label>
+              </form>
             </div>
           </div>
         </div>
