@@ -183,7 +183,7 @@ button {
   color: #333333;
   border: 2px solid #333333;
 }
-
+/*
 button:hover {
   animation-name: shadow-hover;
   animation-duration: 1s;
@@ -191,7 +191,7 @@ button:hover {
   animation-direction: alternate;
   animation-timing-function: ease-in-out;
 }
-
+ */
 /* select:hover {
   animation-name: shadow-hover-large;
   animation-duration: 1s;
@@ -214,7 +214,7 @@ input.checkbox:hover {
 } */
 
 small {
-  font-size: 9pt;
+  font-size: 10pt;
 }
 
 h3 {

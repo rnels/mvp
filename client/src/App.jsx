@@ -2,7 +2,7 @@ import './App.css';
 import { serverURL } from './config.js';
 import CloudLogo from './components/CloudLogo.jsx';
 
-import Wordcloud from './components/Wordcloud.jsx';
+import WordCloud from './components/WordCloud.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
 import RangeSliderScores from './components/RangeSliderScores.jsx';
 
@@ -17,12 +17,12 @@ class App extends React.Component {
     this.state = {
       comments: [],
       searches: [],
-      getSearch: '',
+      activeSearch: '',
       addSearch: '',
       minWords: 2,
-      maxWords: 3,
-      minScore: 1,
-      maxScore: 5000,
+      maxWords: 5,
+      minScore: 2,
+      maxScore: 100,
       bottomScore: 0,
       topScore: 0,
       filter: '',
@@ -41,7 +41,7 @@ class App extends React.Component {
     axios.get(`${serverURL}/comments`, {
       params: {
         search,
-        likeCount: 3 // Helps filter spam comments
+        likeCount: 1 // Helps filter spam comments
        }
     })
       .then((result) => {
@@ -49,8 +49,9 @@ class App extends React.Component {
         // console.log(result.data.comments.length); // DEBUG: Should contain comment length
         this.setState({
           comments: result.data.comments,
+          addSearch: '',
           loading: false
-        }, this.getSearches);
+        }, () => this.getSearches(search));
       })
       .catch((error) => {
         console.log(error);
@@ -58,12 +59,12 @@ class App extends React.Component {
       });
   }
 
-  getSearches() {
+  getSearches(activeSearch='') {
     axios.get(`${serverURL}/searches`)
       .then((result) => {
-        // console.log(result.data.searches); // DEBUG: Should contain searches
         this.setState({
           searches: result.data.searches,
+          activeSearch
         });
       })
       .catch((error) => {
@@ -91,8 +92,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // this.setState({addSearch: 'how to use the youtube API'}, () => this.addSearchSubmit()) // DEBUG
-    // this.setState({getSearch: 'how to use the youtube API'}, () => this.getComments()) // DEBUG
     this.getSearches();
   }
 
@@ -121,32 +120,37 @@ class App extends React.Component {
                     <input
                       type='text'
                       name='add-search'
-                      value={this.state.addSearch.length > 0 ? this.state.addSearch : ''}
-                      placeholder='Enter a search query'
+                      value={this.state.addSearch}
+                      placeholder='Start searching'
                       onChange={(e) => this.setState({addSearch: e.target.value})}
                     />
                   </label>
                     <button
                       type='submit'
                       name='submit-search'
-                      style={this.state.addSearch.length < 3 ? null : {
+                      style={this.state.addSearch.length < 3 || this.state.addSearch.length > 35 || this.state.loading ? null : {
                         'animation-name': 'button-enabled',
                         'animation-duration': '0.5s',
                         'animation-iteration-count': '1',
                         'animation-timing-function': 'ease-in-out',
                         'animation-fill-mode': 'forwards'
-
                       }}
-                      disabled={this.state.addSearch.length < 3}
-                    >Submit</button>
+                      disabled={this.state.addSearch.length < 3 || this.state.addSearch.length > 35 || this.state.loading}
+                    >{
+                      this.state.loading ? 'Loading' :
+                      this.state.addSearch.length > 35 ? 'Type less' :
+                      'Submit'
+                      }
+                    </button>
                 </form>
               </div>
               <div className='search-cloud'>
                 <h3>Search</h3>
                 <form>
                   <select
+                  value={this.state.activeSearch}
                   onChange={(e) => {
-                    this.setState({getSearch: e.target.value}, () => this.getComments(this.state.getSearch));
+                    this.setState({activeSearch: e.target.value}, () => this.getComments(this.state.activeSearch));
                   }}
                   >
                     {<option value='' key='default-option' disabled selected>See past searches</option>}
@@ -164,7 +168,7 @@ class App extends React.Component {
                       })
                     }
                     onChange={(option) => {
-                      this.setState({getSearch: option.value}, () => this.getComments(this.state.getSearch));
+                      this.setState({activeSearch: option.value}, () => this.getComments(this.state.activeSearch));
                     }}
                     className='custom-select'
                   /> */}
@@ -219,7 +223,7 @@ class App extends React.Component {
             </div>
           </div>
         </div>
-        <Wordcloud
+        <WordCloud
           key={'cloud'}
           comments={this.state.comments}
           minWords={this.state.minWords}
