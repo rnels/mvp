@@ -8,7 +8,7 @@ mongoose.connect(`${process.env.DB_HOST}/comments`, {
 console.log('MongoDB connected');
 
 const commentSchema = new mongoose.Schema({
-  commentId: String,
+  _id: String,
   username: String,
   userId: String,
   text: String,

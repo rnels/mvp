@@ -15,7 +15,7 @@ module.exports.saveComments = (comments) => {
   for (let comment of comments) {
     updatePromises.push(
       Comment.updateOne(
-        {commentId: comment.commentId},
+        {_id: comment._id},
         comment,
         {upsert: true}
       )

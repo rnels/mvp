@@ -109,7 +109,7 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
 
   if (bottomScore !== null && topScore !== null) {
     setScoreRange(bottomScore, topScore);
-   }
+  }
 
   return (
     <div className='wordcloud'>

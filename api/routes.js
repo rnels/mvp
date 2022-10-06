@@ -78,7 +78,7 @@ router.post('/comments', (req, res) => {
           for (let item of commentResults.data.items) {
             comments.push(
               {
-                commentId: item.id,
+                _id: item.id,
                 username: item.snippet.topLevelComment.snippet.authorDisplayName,
                 userId: item.snippet.topLevelComment.snippet.authorChannelId ? item.snippet.topLevelComment.snippet.authorChannelId.value : 'N/A',
                 text: item.snippet.topLevelComment.snippet.textOriginal,
