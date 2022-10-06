@@ -132,7 +132,6 @@ router.post('/comments', (req, res) => {
   // console.log(req.body);
   // Search API for videos by query
   req.body.search = req.body.search.toLowerCase();
-  console.log(req.body.search);
   model.doesSearchExist(req.body.search)
     .then((response) => {
       if (response) { // If this search has been done already, don't bother contacting the API
