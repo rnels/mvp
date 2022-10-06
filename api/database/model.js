@@ -10,6 +10,10 @@ module.exports.getCommentsBySearch = (search, likeCount=0) => {
   return Comment.find({search}).where('likeCount').gt(likeCount);
 }
 
+module.exports.doesSearchExist = (search) => {
+  return Comment.findOne({search});
+}
+
 module.exports.saveComments = (comments) => {
   let updatePromises = [];
   for (let comment of comments) {

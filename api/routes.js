@@ -3,48 +3,26 @@ const router = express.Router();
 const axios = require('axios');
 const model = require('./database/model');
 
-// Get comments from db
-// Expects from req.query:
-// search - Youtube search query from which to retrieve comments from the db
-// Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
-router.get('/comments', (req, res) => {
-  model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
-    .then((results) => {
-      // console.log(results);
-      if (!results.length) {
-        res.sendStatus(404);
-        return;
-      }
-      let comments = [];
-      for (let result of results) {
-        comments.push(result.text);
-      }
-      res.status(200).send({comments});
-    })
-    .catch((error) => {
-      console.log(error);
-      res.sendStatus(404);
-    });
-});
+let apiTokens = [
+  process.env.API_TOKEN1,
+  process.env.API_TOKEN2,
+  process.env.API_TOKEN3
+]
 
-// Get top comments for a search query from YT API, save to db
-// Expects from req.body:
-// search - Youtube search query from which to retrieve comments from the API
-// First submit the query to youtube API, get list of results
-// From that list of results, get the top comments
-// Save the top comments by url and search query
-// Results will be returned by search query
-// TODO: Add language filter on comment results
-router.post('/comments', (req, res) => {
-  // console.log(req.body);
-  // Search API for videos by query
+let tokenIndex = 0;
+
+const tryApi = function(req, res, depth=0) {
+  if (depth === apiTokens.length) {
+    res.status(500).send('Youtube API has reached its limit');
+    return;
+  }
   axios.get(`${process.env.API_URL}/search`, {
     params: {
       part: 'id',
-      maxResults: 50,
+      maxResults: 25,
       order: 'relevance',
       q: req.body.search,
-      key: process.env.API_TOKEN
+      key: apiTokens[tokenIndex]
     }
   })
     .then((videoResults) => {
@@ -61,7 +39,7 @@ router.post('/comments', (req, res) => {
               maxResults: 100,
               // searchTerms: req.body.search, // TODO: May take this out, get all comments for videos relevant to the query
               videoId: item.id.videoId,
-              key: process.env.API_TOKEN
+              key: apiTokens[tokenIndex]
             }
           })
           .catch((error) => {
@@ -97,9 +75,72 @@ router.post('/comments', (req, res) => {
       res.sendStatus(201);
     })
     .catch((error) => {
-      console.log(error);
-      res.sendStatus(400);
+      if (error.response.status === 403) {
+        let token = '';
+        let cycles = 1;
+        while (token === '' && cycles < apiTokens.length) {
+          cycles++;
+          if (tokenIndex < apiTokens.length - 1) {
+            tokenIndex += 1;
+          } else {
+            tokenIndex = 0;
+          }
+          token = apiTokens[tokenIndex];
+          console.log('Switching tokens');
+        }
+        tryApi(req, res, depth + 1); // Call itself recursively if 403, rather than send 400
+      } else {
+        console.log(error.response);
+        res.sendStatus(500);
+      }
     });
+}
+
+// Get comments from db
+// Expects from req.query:
+// search - Youtube search query from which to retrieve comments from the db
+// Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
+router.get('/comments', (req, res) => {
+  model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
+    .then((results) => {
+      // console.log(results);
+      if (!results.length) {
+        res.sendStatus(404);
+        return;
+      }
+      let comments = [];
+      for (let result of results) {
+        comments.push(result.text);
+      }
+      res.status(200).send({comments});
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(404);
+    });
+});
+
+// Get top comments for a search query from YT API, save to db
+// Expects from req.body:
+// search - Youtube search query from which to retrieve comments from the API
+// First submit the query to youtube API, get list of results
+// From that list of results, get the top comments
+// Save the top comments by url and search query
+// Results will be returned by search query
+// TODO: Add language filter on comment results
+router.post('/comments', (req, res) => {
+  // console.log(req.body);
+  // Search API for videos by query
+  model.doesSearchExist(req.body.search)
+    .then((response) => {
+      if (response) { // If this search has been done already, don't bother contacting the API
+        res.sendStatus(201);
+        return;
+      }
+      tryApi(req, res);
+    })
+    .catch((error) => res.sendStatus(500));
+
 });
 
 router.get('/searches', (req, res) => {
@@ -109,11 +150,7 @@ router.get('/searches', (req, res) => {
         res.sendStatus(404);
         return;
       }
-      let searches = [];
-      for (let result of results) {
-        searches.push(result);
-      }
-      res.status(200).send({searches});
+      res.status(200).send({searches: results});
     })
     .catch((error) => {
       console.log(error);
