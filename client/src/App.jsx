@@ -122,7 +122,7 @@ class App extends React.Component {
                       name='add-search'
                       value={this.state.addSearch}
                       placeholder='Start searching'
-                      onChange={(e) => this.setState({addSearch: e.target.value})}
+                      onChange={(e) => this.setState({addSearch: e.target.value.toLowerCase()})}
                     />
                   </label>
                     <button
