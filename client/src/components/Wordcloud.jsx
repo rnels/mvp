@@ -3,7 +3,7 @@ import { memo } from 'react';
 
 import { removeStopwords } from 'stopword';
 
-export default memo(function Wordcloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter, setScoreRange}) {
+export default memo(function WordCloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter, setScoreRange}) {
 
   const words = [];
   const options = {
@@ -63,9 +63,10 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
     )
   }
 
-  let temp = {};
+  let phrases = {};
 
   for (let i = 0; i < comments.length; i++) {
+    let tempPhrases = {};
     let split = comments[i].toLowerCase()
     .replace(/[.,/#!$%^&*;:{}=\-_`"'’~()]/g, "")
     .replace(/[\W_]+/g," ");
@@ -77,31 +78,37 @@ export default memo(function Wordcloud({comments, filter, minWords, maxWords, mi
       for (let j = 0; j + z <= split.length; j++) {
         let phrase = split.slice(j, j + z).join(' ');
         if (phrase.length > 2) { // Exclude phrases under 3 characters
-          if (!temp[phrase]) {
-            temp[phrase] = 0;
+          if (!tempPhrases[phrase]) {
+            tempPhrases[phrase] = 1;
           }
-          temp[phrase] += 1;
         }
       }
     }
+    // This limits each comment to scoring +1 on a phrase, especially useful in the case of comments which are repeating words over and over
+    for (let phrase in tempPhrases) {
+      if (!phrases[phrase]) {
+        phrases[phrase] = 0;
+      }
+      phrases[phrase] += 1;
+    }
   }
 
-  for (let key in temp) {
+  for (let key in phrases) {
     if (key.includes(filter)) {
       if (bottomScore === null) {
-        bottomScore = temp[key];
-      } else if (bottomScore > temp[key]) {
-        bottomScore = temp[key];
+        bottomScore = phrases[key];
+      } else if (bottomScore > phrases[key]) {
+        bottomScore = phrases[key];
       }
       if (topScore === null) {
-        topScore = temp[key];
-      } else if (topScore < temp[key]) {
-        topScore = temp[key];
+        topScore = phrases[key];
+      } else if (topScore < phrases[key]) {
+        topScore = phrases[key];
       }
-      if (temp[key] >= minScore && temp[key] <= maxScore) {
+      if (phrases[key] >= minScore && phrases[key] <= maxScore) {
         words.push({
           text: key,
-          value: temp[key]
+          value: phrases[key]
         })
       }
     }
