@@ -1,4 +1,27 @@
-import CommentModel from './db';
+import { Schema, model } from 'mongoose';
+import './db';
+
+interface IComment {
+  _id: number,
+  username: string,
+  userId: string,
+  text: string,
+  likeCount: number,
+  videoId: string,
+  search: string
+}
+
+const commentSchema = new Schema<IComment>({
+  _id: String,
+  username: String,
+  userId: String,
+  text: String,
+  likeCount: Number,
+  videoId: String,
+  search: String
+});
+
+const CommentModel = model<IComment>('Comment', commentSchema);
 
 // TODO: Works with partial match now, but want to explore this further
 // to possibly have it partial match only whole words
@@ -14,8 +37,7 @@ export function doesSearchExist(search: string) {
   return CommentModel.findOne({search});
 }
 
-// TODO: Update comments with a type
-export function saveComments(comments) {
+export function saveComments(comments: IComment[]) {
   let updatePromises = [];
   for (let comment of comments) {
     updatePromises.push(
