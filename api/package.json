@@ -11,7 +11,11 @@
     "mongoose": "^6.6.2"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "npx nodemon index.js"
+    "start": "node src/index.js",
+    "dev": "npx nodemon src/index.js",
+    "ts-build": "npx tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
   }
 }

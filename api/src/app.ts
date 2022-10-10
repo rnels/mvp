@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
-const router = require('./routes.js');
 
 const app = express();
 app.use(compression());
