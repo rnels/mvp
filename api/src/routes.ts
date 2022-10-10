@@ -1,6 +1,8 @@
+import axios from 'axios';
+import express from 'express';
+import * as model from './database/model';
+
 const router = express.Router();
-const axios = require('axios');
-const model = require('./database/model');
 
 let apiTokens = [
   process.env.API_TOKEN1,
@@ -10,7 +12,7 @@ let apiTokens = [
 
 let tokenIndex = 0;
 
-const tryApi = function(req, res, depth=0) {
+const tryApi = function(req: any, res, depth=0) {
   if (depth === apiTokens.length) {
     res.status(500).send('Youtube API has reached its limit');
     return;
@@ -99,7 +101,7 @@ const tryApi = function(req, res, depth=0) {
 // Expects from req.query:
 // search - Youtube search query from which to retrieve comments from the db
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
-router.get('/comments', (req, res) => {
+router.get('/comments', (req: any, res) => {
   model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
     .then((results) => {
       // console.log(results);
@@ -127,7 +129,7 @@ router.get('/comments', (req, res) => {
 // Save the top comments by url and search query
 // Results will be returned by search query
 // TODO: Add language filter on comment results
-router.post('/comments', (req, res) => {
+router.post('/comments', (req: any, res) => {
   // console.log(req.body);
   // Search API for videos by query
   req.body.search = req.body.search.toLowerCase();
@@ -143,7 +145,7 @@ router.post('/comments', (req, res) => {
 
 });
 
-router.get('/searches', (req, res) => {
+router.get('/searches', (req: any, res) => {
   model.getAllSearches()
     .then((results) => {
       if (!results.length) {
@@ -158,4 +160,4 @@ router.get('/searches', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

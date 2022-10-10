@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 mongoose.connect(`${process.env.DB_HOST}/comments`, {
   user: process.env.DB_USER,
@@ -17,4 +17,4 @@ const commentSchema = new mongoose.Schema({
   search: String
 });
 
-module.exports = mongoose.model('Comment', commentSchema);
+export default mongoose.model('Comment', commentSchema);

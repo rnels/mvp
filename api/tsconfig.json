@@ -2,7 +2,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "allowJs": true,
-    "target": "es5"
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node"
+  },
+  "typeAcquisition": {
+    "enable": true
   },
   "include": ["./src/**/*"]
 }
