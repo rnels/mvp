@@ -1,18 +1,36 @@
 import './App.css';
 import { serverURL } from './config';
 import CloudLogo from './components/CloudLogo';
-
 import WordCloud from './components/WordCloud';
 import RangeSlider from './components/RangeSlider';
 import RangeSliderScores from './components/RangeSliderScores';
 
 import React from 'react';
 // import Select from 'react-select';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-class App extends React.Component {
+// Using `interface` is also ok
+type AppProps = {};
 
-  constructor(props) {
+type AppState = {
+  comments: string[],
+  searches: string[],
+  activeSearch: string,
+  addSearch: string,
+  minWords: number,
+  maxWords: number,
+  minScore: number,
+  maxScore: number,
+  bottomScore: number,
+  topScore: number,
+  filter: string,
+  stopWordFilter: boolean,
+  loading: boolean
+};
+
+class App extends React.Component<AppProps, AppState> {
+
+  constructor(props: any) {
     super(props);
     this.state = {
       comments: [],
@@ -26,9 +44,8 @@ class App extends React.Component {
       bottomScore: 0,
       topScore: 0,
       filter: '',
-      commonWordFilter: true,
+      stopWordFilter: true,
       loading: false
-      // TODO: Add 'likeCount' filter?
     };
     this.getComments = this.getComments.bind(this);
     this.getSearches = this.getSearches.bind(this);
@@ -44,30 +61,32 @@ class App extends React.Component {
         likeCount: 1 // Helps filter spam comments
        }
     })
-      .then((result) => {
+      .then((result: AxiosResponse) => {
         // TODO: Add weights based on comment rating
         // console.log(result.data.comments.length); // DEBUG: Should contain comment length
+        let comments: string[] = result.data.comments;
         this.setState({
-          comments: result.data.comments,
+          comments,
           addSearch: '',
           loading: false
         }, () => this.getSearches(search));
       })
-      .catch((error) => {
+      .catch((error: AxiosResponse) => {
         console.log(error);
         this.setState({loading: false});
       });
   }
 
-  getSearches(activeSearch='') {
+  getSearches(activeSearch: string='') {
     axios.get(`${serverURL}/searches`)
-      .then((result) => {
+      .then((result: AxiosResponse) => {
+        let searches: string[] = result.data.searches;
         this.setState({
-          searches: result.data.searches,
+          searches,
           activeSearch
         });
       })
-      .catch((error) => {
+      .catch((error: AxiosResponse) => {
         console.log(error)
       });
   }
@@ -75,16 +94,14 @@ class App extends React.Component {
   addSearchSubmit() {
     if (!this.state.loading) this.setState({loading: true});
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
-      .then((success) => {
-        this.getComments(this.state.addSearch);
-      })
-      .catch((error) => {
+      .then(() => this.getComments(this.state.addSearch))
+      .catch((error: AxiosResponse) => {
         this.setState({loading: false});
         console.log(error)
       });
   }
 
-  setScoreRange(bottomScore, topScore) {
+  setScoreRange(bottomScore: number, topScore: number) {
     this.setState({
       bottomScore,
       topScore
@@ -128,12 +145,12 @@ class App extends React.Component {
                     <button
                       type='submit'
                       name='submit-search'
-                      style={this.state.addSearch.length < 3 || this.state.addSearch.length > 35 || this.state.loading ? null : {
-                        'animation-name': 'button-enabled',
-                        'animation-duration': '0.5s',
-                        'animation-iteration-count': '1',
-                        'animation-timing-function': 'ease-in-out',
-                        'animation-fill-mode': 'forwards'
+                      style={this.state.addSearch.length < 3 || this.state.addSearch.length > 35 || this.state.loading ? undefined : {
+                        animationName: 'button-enabled',
+                        animationDuration: '0.5s',
+                        animationIterationCount: '1',
+                        animationTimingFunction: 'ease-in-out',
+                        animationFillMode: 'forwards'
                       }}
                       disabled={this.state.addSearch.length < 3 || this.state.addSearch.length > 35 || this.state.loading}
                     >{
@@ -179,7 +196,7 @@ class App extends React.Component {
               <h3>Filter</h3>
               <RangeSlider
                 key='count-slider'
-                onSubmit={(minWords, maxWords) => {
+                onSubmit={(minWords: number, maxWords: number) => {
                   this.setState({
                     minWords,
                     maxWords
@@ -190,7 +207,7 @@ class App extends React.Component {
               />
               <RangeSliderScores
                 key='score-slider'
-                onSubmit={(minScore, maxScore) => {
+                onSubmit={(minScore: number, maxScore: number) => {
                   this.setState({
                     minScore,
                     maxScore
@@ -209,13 +226,13 @@ class App extends React.Component {
                   value={this.state.filter}
                   onChange={(e) => {this.setState({filter: e.target.value.toLowerCase()})}}
                 />
-                <label style={{'margin-top': '6px'}}>
+                <label style={{marginTop: '6px'}}>
                   <input
                       className='checkmark'
                       type='checkbox'
                       name='filter-common-words'
-                      checked={this.state.commonWordFilter}
-                      onChange={(e) => {this.setState({commonWordFilter: e.target.checked})}}
+                      checked={this.state.stopWordFilter}
+                      onChange={(e) => {this.setState({stopWordFilter: e.target.checked})}}
                     />
                   <small>Filter stop words</small>
                 </label>
@@ -231,7 +248,7 @@ class App extends React.Component {
           minScore={this.state.minScore}
           maxScore={this.state.maxScore}
           filter={this.state.filter}
-          commonWordFilter={this.state.commonWordFilter}
+          stopWordFilter={this.state.stopWordFilter}
           setScoreRange={this.setScoreRange}
         />
       </div>

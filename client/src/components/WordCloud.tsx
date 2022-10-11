@@ -1,12 +1,22 @@
-import ReactWordcloud from 'react-wordcloud';
-import { memo } from 'react';
-
+import React, { memo } from 'react';
+import ReactWordcloud, { MinMaxPair, OptionsProp, Word } from 'react-wordcloud';
 import { removeStopwords } from 'stopword';
 
-export default memo(function WordCloud({comments, filter, minWords, maxWords, minScore, maxScore, commonWordFilter, setScoreRange}) {
+interface IWordCloud {
+  comments: string[],
+  filter: string,
+  minWords: number,
+  maxWords: number,
+  minScore: number,
+  maxScore: number,
+  stopWordFilter: boolean,
+  setScoreRange: Function
+}
 
-  const words = [];
-  const options = {
+export default memo(function WordCloud({comments, filter, minWords, maxWords, minScore, maxScore, stopWordFilter, setScoreRange}: IWordCloud) {
+
+  const words: Word[] = [];
+  const options: OptionsProp = {
     colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
     enableTooltip: true,
     deterministic: false,
@@ -21,33 +31,29 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
     spiral: "archimedean",
     transitionDuration: 1000
   };
-  const size = [
+  const size: MinMaxPair = [
     window.innerWidth > 1100 ? window.innerWidth * 0.40 : window.innerWidth * 0.80,
     window.innerWidth > 1100 ? window.innerHeight * 0.60 : window.innerHeight * 0.50
   ];
 
-  let bottomScore = null;
-  let topScore = null;
+  let bottomScore: number = 0;
+  let topScore: number = 0;
 
   if (!comments.length) {
-    let textChoices = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
+    let textChoices: string[] = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
     for (let i = 0; i < 50; i++) {
       let choice = Math.round(Math.random() * 12);
       let value = Math.round(Math.random() * 100);
-      if (bottomScore === null) {
-        bottomScore = value;
-      } else if (bottomScore > value) {
+      if (bottomScore === 0 || bottomScore > value) {
         bottomScore = value;
       }
-      if (topScore === null) {
-        topScore = value;
-      } else if (topScore < value) {
+      if (topScore === 0 || topScore < value) {
         topScore = value;
       }
       words.push({
         text: textChoices[choice],
         value
-      })
+      });
     }
 
     if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
@@ -57,26 +63,26 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
         <ReactWordcloud
           words={words}
           options={options}
-          size={size}
+          size={size} // TODO: Consider disabling this to enable responsive resizing
         />
       </div>
     )
   }
 
-  let phrases = {};
+  let phrases: any = {};
 
   for (let i = 0; i < comments.length; i++) {
-    let tempPhrases = {};
-    let split = comments[i].toLowerCase()
+    let tempPhrases: any = {};
+    let regex: string = comments[i].toLowerCase()
     .replace(/[.,/#!$%^&*;:{}=\-_`"'’~()]/g, "")
     .replace(/[\W_]+/g," ");
-    split = split.split(' ');
-    if (commonWordFilter) {
+    let split: string[] = regex.split(' ');
+    if (stopWordFilter) {
       split = removeStopwords(split);
     }
     for (let z = minWords; z <= maxWords && z <= split.length; z++) {
       for (let j = 0; j + z <= split.length; j++) {
-        let phrase = split.slice(j, j + z).join(' ');
+        let phrase: string = split.slice(j, j + z).join(' ');
         if (phrase.length > 2) { // Exclude phrases under 3 characters
           if (!tempPhrases[phrase]) {
             tempPhrases[phrase] = 1;
@@ -95,21 +101,17 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
 
   for (let key in phrases) {
     if (key.includes(filter)) {
-      if (bottomScore === null) {
-        bottomScore = phrases[key];
-      } else if (bottomScore > phrases[key]) {
+      if (bottomScore === 0 || bottomScore > phrases[key]) {
         bottomScore = phrases[key];
       }
-      if (topScore === null) {
-        topScore = phrases[key];
-      } else if (topScore < phrases[key]) {
+      if (topScore === 0 || topScore < phrases[key]) {
         topScore = phrases[key];
       }
       if (phrases[key] >= minScore && phrases[key] <= maxScore) {
         words.push({
           text: key,
           value: phrases[key]
-        })
+        });
       }
     }
   }

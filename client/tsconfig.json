@@ -1,8 +1,7 @@
 {
-  "compilerOptions": {
+  "compilerOptions": { // TODO: Set this up to build, or don't worry about it?
       "outDir": "./dist/",
       "sourceMap": true,
-      "strictNullChecks": true,
       "jsx": "react",
       "allowJs": true,
       "target": "es6",
@@ -11,7 +10,6 @@
       "forceConsistentCasingInFileNames": true,
       "strict": true,
       "skipLibCheck": true
-
   },
   "include": [
       "./src/"

@@ -1,7 +1,15 @@
+import React, { useState } from 'react';
 import { Slider } from '@mui/material';
-import { useState } from 'react';
 
-export default function RangeSliderScores({onSubmit, minScore, maxScore, bottomScore, topScore}) {
+interface IRangeSliderScores {
+  onSubmit: Function,
+  minScore: number,
+  maxScore: number,
+  bottomScore: number,
+  topScore: number
+}
+
+export default function RangeSliderScores({onSubmit, minScore, maxScore, bottomScore, topScore}: IRangeSliderScores) {
 
   const [range, setRange] = useState([minScore, maxScore]);
 
@@ -16,7 +24,9 @@ export default function RangeSliderScores({onSubmit, minScore, maxScore, bottomS
         min={bottomScore}
         max={topScore}
         onChange={(e) => {
-          setRange([e.target.value[0], e.target.value[1]]);
+          let leftValue: number = (e.target as any).value[0];
+          let rightValue: number = (e.target as any).value[1];
+          setRange([leftValue, rightValue]);
         }}
         onChangeCommitted={() => {
           onSubmit(range[0], range[1]);

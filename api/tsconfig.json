@@ -6,7 +6,8 @@
     "module": "CommonJS",
     "target": "ES6",
     "moduleResolution": "node",
-    "removeComments": true
+    "removeComments": true,
+    "strict": true
   },
   "typeAcquisition": {
     "enable": true
