@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+      "outDir": "./dist/",
+      "sourceMap": true,
+      "strictNullChecks": true,
+      "jsx": "react",
+      "allowJs": true,
+      "target": "es6",
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "skipLibCheck": true
+
+  },
+  "include": [
+      "./src/"
+  ]
+}

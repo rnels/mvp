@@ -3,7 +3,8 @@
     "outDir": "./dist",
     "allowJs": true,
     "esModuleInterop": true,
-    "target": "es6",
+    "module": "CommonJS",
+    "target": "ES6",
     "moduleResolution": "node",
     "removeComments": true
   },

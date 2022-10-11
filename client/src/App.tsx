@@ -1,10 +1,10 @@
 import './App.css';
-import { serverURL } from './config.js';
-import CloudLogo from './components/CloudLogo.jsx';
+import { serverURL } from './config';
+import CloudLogo from './components/CloudLogo';
 
-import WordCloud from './components/WordCloud.jsx';
-import RangeSlider from './components/RangeSlider.jsx';
-import RangeSliderScores from './components/RangeSliderScores.jsx';
+import WordCloud from './components/WordCloud';
+import RangeSlider from './components/RangeSlider';
+import RangeSliderScores from './components/RangeSliderScores';
 
 import React from 'react';
 // import Select from 'react-select';
@@ -36,7 +36,7 @@ class App extends React.Component {
     this.setScoreRange = this.setScoreRange.bind(this);
   }
 
-  getComments(search) {
+  getComments(search: string) {
     if (!this.state.loading) this.setState({loading: true});
     axios.get(`${serverURL}/comments`, {
       params: {
