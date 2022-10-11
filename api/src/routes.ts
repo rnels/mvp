@@ -1,18 +1,19 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import express from 'express';
 import * as model from './database/model';
+import { IComment } from './interfaces';
 
 const router = express.Router();
 
-let apiTokens = [
+let apiTokens: string[] = [
   process.env.API_TOKEN1,
   process.env.API_TOKEN2,
   process.env.API_TOKEN3
 ]
 
-let tokenIndex = 0;
+let tokenIndex: number = 0;
 
-const tryApi = function(req: any, res, depth=0) {
+const tryApi = function(req: any, res, depth: number=0) {
   if (depth === apiTokens.length) {
     res.status(500).send('Youtube API has reached its limit');
     return;
@@ -26,9 +27,9 @@ const tryApi = function(req: any, res, depth=0) {
       key: apiTokens[tokenIndex]
     }
   })
-    .then((videoResults) => {
+    .then((videoResults: AxiosResponse) => {
       // Get videos from yt API by search query
-      let commentPromises = [];
+      let commentPromises: any[] = [];
       for (let item of videoResults.data.items) {
         commentPromises.push(
           // Get relevant comments from videos
@@ -50,8 +51,8 @@ const tryApi = function(req: any, res, depth=0) {
       }
       return Promise.all(commentPromises);
     })
-    .then((promiseResults) => {
-      let comments = [];
+    .then((promiseResults: any[]) => {
+      let comments: IComment[] = [];
       for (let commentResults of promiseResults) {
         if (commentResults && commentResults.data) {
           for (let item of commentResults.data.items) {
@@ -71,14 +72,13 @@ const tryApi = function(req: any, res, depth=0) {
       }
       return model.saveComments(comments);
     })
-    .then((results) => {
-      // console.log(results);
+    .then((result: any[]) => {
       res.sendStatus(201);
     })
-    .catch((error) => {
-      if (error.response.status === 403) {
-        let token = '';
-        let cycles = 1;
+    .catch((error) => { // TODO: Can I catch different errors based on the type of response object? That would be sweet
+      if (error.response && error.response.status === 403) {
+        let token: string = '';
+        let cycles: number = 1;
         while (token === '' && cycles < apiTokens.length) {
           cycles++;
           if (tokenIndex < apiTokens.length - 1) {
@@ -102,14 +102,15 @@ const tryApi = function(req: any, res, depth=0) {
 // search - Youtube search query from which to retrieve comments from the db
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 router.get('/comments', (req: any, res) => {
-  model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
-    .then((results) => {
-      // console.log(results);
+  let search: string = req.query.search;
+  let likeCount: number = req.query.likeCount;
+  model.getCommentsBySearchPartial(search, likeCount)
+    .then((results: IComment[]) => {
       if (!results.length) {
         res.sendStatus(404);
         return;
       }
-      let comments = [];
+      let comments: string[] = [];
       for (let result of results) {
         comments.push(result.text);
       }
@@ -132,9 +133,9 @@ router.get('/comments', (req: any, res) => {
 router.post('/comments', (req: any, res) => {
   // console.log(req.body);
   // Search API for videos by query
-  req.body.search = req.body.search.toLowerCase();
-  model.doesSearchExist(req.body.search)
-    .then((response) => {
+  let search: string = req.body.search.toLowerCase();
+  model.doesSearchExist(search)
+    .then((response: IComment) => {
       if (response) { // If this search has been done already, don't bother contacting the API
         res.sendStatus(201);
         return;
@@ -147,12 +148,12 @@ router.post('/comments', (req: any, res) => {
 
 router.get('/searches', (req: any, res) => {
   model.getAllSearches()
-    .then((results) => {
-      if (!results.length) {
+    .then((searches: string[]) => {
+      if (!searches.length) {
         res.sendStatus(404);
         return;
       }
-      res.status(200).send({searches: results});
+      res.status(200).send({searches});
     })
     .catch((error) => {
       console.log(error);

@@ -1,15 +1,6 @@
 import { Schema, model } from 'mongoose';
 import './db';
-
-interface IComment {
-  _id: number,
-  username: string,
-  userId: string,
-  text: string,
-  likeCount: number,
-  videoId: string,
-  search: string
-}
+import { IComment } from '../interfaces';
 
 const commentSchema = new Schema<IComment>({
   _id: String,
@@ -38,7 +29,7 @@ export function doesSearchExist(search: string) {
 }
 
 export function saveComments(comments: IComment[]) {
-  let updatePromises = [];
+  let updatePromises: any[] = [];
   for (let comment of comments) {
     updatePromises.push(
       CommentModel.updateOne(
