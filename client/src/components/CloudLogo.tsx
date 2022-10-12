@@ -28,8 +28,8 @@ export default function CloudLogo(props: CloudLogoProps) {
             height={100}
             width={100}
             onClick={() => {
-              if (inProp) setInProp(false);
-              else setInProp(true);
+              if (inProp) { setInProp(false); }
+              else { setInProp(true); }
             }}
           />
         </div>

@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import express, { Request, Response } from 'express';
 import * as model from './database/model';
-import { Comment, TypedRequestQuery, TypedRequestBody } from './types';
+import { Comment, TypedRequestQuery, TypedRequestBody, GetCommentsParams } from './types';
 
 let apiTokens: any[] = [
   process.env.API_TOKEN1,
@@ -34,11 +34,11 @@ const tryApi = function(req: Request, res: Response, depth=0) {
     }
   })
     .then((videoResults: AxiosResponse) => {
-      // Get videos from yt API by search query
-      let commentPromises: any[] = [];
+      // Get videos from YouTube API by search query
+      let commentPromises = [];
       for (let item of videoResults.data.items) {
         commentPromises.push(
-          // Get relevant comments from videos
+          // Get most relevant comments from returned videos
           axios.get(`${process.env.API_URL}/commentThreads`, {
             params: {
               part: 'snippet',
@@ -59,14 +59,15 @@ const tryApi = function(req: Request, res: Response, depth=0) {
       for (let response of responsePromises) {
         if (response !== null) {
           for (let comment of response.data.items) {
+            let snippet = comment.snippet.topLevelComment.snippet;
             comments.push(
               {
                 _id: comment.id,
-                username: comment.snippet.topLevelComment.snippet.authorDisplayName,
-                userId: comment.snippet.topLevelComment.snippet.authorChannelId ? comment.snippet.topLevelComment.snippet.authorChannelId.value : 'N/A',
-                text: comment.snippet.topLevelComment.snippet.textOriginal,
-                likeCount: comment.snippet.topLevelComment.snippet.likeCount,
-                videoId: comment.snippet.topLevelComment.snippet.videoId,
+                username: snippet.authorDisplayName,
+                userId: snippet.authorChannelId ? snippet.authorChannelId.value : 'N/A',
+                text: snippet.textOriginal,
+                likeCount: snippet.likeCount,
+                videoId: snippet.videoId,
                 search: req.body.search
               }
             )
@@ -99,8 +100,8 @@ const tryApi = function(req: Request, res: Response, depth=0) {
         let token = '';
         let cycles = 1;
         while (token === '' && cycles < apiTokens.length) {
-          if (tokenIndex < apiTokens.length - 1) tokenIndex += 1;
-          else tokenIndex = 0;
+          if (tokenIndex < apiTokens.length - 1) { tokenIndex += 1; }
+          else { tokenIndex = 0; }
           token = apiTokens[tokenIndex];
           cycles++;
           console.log('Presumed API token error, switching tokens');
@@ -119,11 +120,6 @@ const tryApi = function(req: Request, res: Response, depth=0) {
     })
 }
 
-// type GetCommentsParams = {
-//   search: string,
-//   likeCount: number
-// }
-
 // Get comments from db
 // Expects from req.query:
   // search - Youtube search query from which to retrieve comments from the db
@@ -133,7 +129,7 @@ const tryApi = function(req: Request, res: Response, depth=0) {
 // router.get('/comments', (req: TypedRequestQuery<GetCommentsParams>, res) => {
 router.get('/comments', (req, res) => {
   if (!req.query.search) {
-    res.sendStatus(400);
+    res.status(400).send({message: 'Missing required request query "search"'});
     return;
   }
   model.getCommentsBySearchPartial(req.query.search as string, parseInt(req.query.likeCount as string) || -1)

@@ -11,6 +11,12 @@ export type Comment = {
 export interface TypedRequestQuery<T> extends Express.Request {
   query: T
 }
+
 export interface TypedRequestBody<T> extends Express.Request {
   body: T
+}
+
+export type GetCommentsParams = {
+  search: string,
+  likeCount: number
 }

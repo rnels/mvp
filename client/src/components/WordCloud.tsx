@@ -77,24 +77,19 @@ export default memo(function WordCloud(props: WordCloudProps) {
     .replace(/[.,/#!$%^&*;:{}=\-_`"'’~()]/g, "")
     .replace(/[\W_]+/g," ");
     let split = regex.split(' ');
-    if (props.stopWordFilter) {
-      split = removeStopwords(split);
-    }
+    if (props.stopWordFilter) { split = removeStopwords(split); }
     for (let z = props.minWords; z <= props.maxWords && z <= split.length; z++) {
       for (let j = 0; j + z <= split.length; j++) {
         let phrase = split.slice(j, j + z).join(' ');
-        if (phrase.length > 2) { // Exclude phrases under 3 characters
-          if (!tempPhrases[phrase]) {
-            tempPhrases[phrase] = 1;
-          }
+        // Exclude phrases under 3 characters
+        if (phrase.length > 2 && !tempPhrases[phrase]) {
+          tempPhrases[phrase] = 1;
         }
       }
     }
     // This limits each comment to scoring +1 on a phrase, especially useful in the case of comments which are repeating words over and over
     for (let phrase in tempPhrases) {
-      if (!phrases[phrase]) {
-        phrases[phrase] = 0;
-      }
+      if (!phrases[phrase]) { phrases[phrase] = 0; }
       phrases[phrase] += 1;
     }
   }

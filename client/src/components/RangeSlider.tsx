@@ -27,9 +27,7 @@ export default function RangeSlider(props: RangeSliderProps) {
           let rightValue: number = (e.target as any).value[1];
           setRange([leftValue, rightValue]);
         }}
-        onChangeCommitted={() => {
-          props.onSubmit(range[0], range[1]);
-        }}
+        onChangeCommitted={() => props.onSubmit(range[0], range[1])}
         marks={[
           {
             value: 1,
