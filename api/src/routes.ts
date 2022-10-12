@@ -121,12 +121,13 @@ type GetCommentsParams = {
   // likeCount (optional) - Minimum number of likes a comment must receive to be returned in the query
 // Works on partial matches i.e. 'zoo' will match for 'my day at the zoo' searches
 // TypedRequestQuery is there solely for TS exercise
-router.get('/comments', (req: TypedRequestQuery<GetCommentsParams>, res) => {
-  if (!req.query.search || req.query.likeCount === undefined) {
+// router.get('/comments', (req: TypedRequestQuery<GetCommentsParams>, res) => {
+router.get('/comments', (req, res) => {
+  if (!req.query.search) {
     res.sendStatus(400);
     return;
   }
-  model.getCommentsBySearchPartial(req.query.search, req.query.likeCount)
+  model.getCommentsBySearchPartial(req.query.search as string, parseInt(req.query.likeCount as string) || -1)
     .then((results: IComment[]) => {
       if (!results.length) {
         res.status(404).send({message: `No comments match the given search "${req.query.search}"`});
