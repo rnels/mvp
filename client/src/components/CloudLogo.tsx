@@ -2,17 +2,17 @@ import React, { useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ReactComponent as Logo } from '../logo.svg';
 
-interface ICloudLogo {
+interface CloudLogoProps {
   loading: boolean
 }
 
-export default function CloudLogo({loading}: ICloudLogo) {
+export default function CloudLogo(props: CloudLogoProps) {
 
   const [inProp, setInProp] = useState(false);
   const nodeRef = useRef(null);
 
     setTimeout(() => {
-      if (loading && !inProp) {
+      if (props.loading && !inProp) {
         setInProp(true);
         setTimeout(() => {
           setInProp(false);

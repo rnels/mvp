@@ -7,12 +7,13 @@ import RangeSliderScores from './components/RangeSliderScores';
 
 import React from 'react';
 // import Select from 'react-select';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
-// Using `interface` is also ok
-type AppProps = {};
+interface AppProps {
 
-type AppState = {
+};
+
+interface AppState {
   comments: string[],
   searches: string[],
   activeSearch: string,
@@ -30,7 +31,7 @@ type AppState = {
 
 class App extends React.Component<AppProps, AppState> {
 
-  constructor(props: any) {
+  constructor(props: AppProps) {
     super(props);
     this.state = {
       comments: [],
@@ -63,7 +64,6 @@ class App extends React.Component<AppProps, AppState> {
     })
       .then((result: AxiosResponse) => {
         // TODO: Add weights based on comment rating
-        // console.log(result.data.comments.length); // DEBUG: Should contain comment length
         let comments: string[] = result.data.comments;
         this.setState({
           comments,
@@ -71,13 +71,13 @@ class App extends React.Component<AppProps, AppState> {
           loading: false
         }, () => this.getSearches(search));
       })
-      .catch((error: AxiosResponse) => {
-        console.log(error);
-        this.setState({loading: false});
+      .catch((error: AxiosError) => {
+        this.setState({ loading: false });
+        console.log(error.response!.data);
       });
   }
 
-  getSearches(activeSearch: string='') {
+  getSearches(activeSearch='') {
     axios.get(`${serverURL}/searches`)
       .then((result: AxiosResponse) => {
         let searches: string[] = result.data.searches;
@@ -86,8 +86,8 @@ class App extends React.Component<AppProps, AppState> {
           activeSearch
         });
       })
-      .catch((error: AxiosResponse) => {
-        console.log(error)
+      .catch((error: AxiosError) => {
+        console.log(error.response!.data);
       });
   }
 
@@ -95,9 +95,9 @@ class App extends React.Component<AppProps, AppState> {
     if (!this.state.loading) this.setState({loading: true});
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then(() => this.getComments(this.state.addSearch))
-      .catch((error: AxiosResponse) => {
-        this.setState({loading: false});
-        console.log(error)
+      .catch((error: AxiosError) => {
+        this.setState({ loading: false });
+        console.log(error.response!.data);
       });
   }
 

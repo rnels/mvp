@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { // TODO: Set this up to build, or don't worry about it?
+  "compilerOptions": { // Not really used at the moment (using react-scripts build), but can run ts-build if you want
       "outDir": "./dist/",
       "sourceMap": true,
       "jsx": "react",

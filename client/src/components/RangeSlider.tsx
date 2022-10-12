@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Slider } from '@mui/material';
 
-interface IRangeSlider {
+interface RangeSliderProps {
   onSubmit: Function,
   minWords: number,
   maxWords: number
 }
 
-export default function RangeSlider({onSubmit, minWords, maxWords}: IRangeSlider) {
+export default function RangeSlider(props: RangeSliderProps) {
 
-  const [range, setRange] = useState([minWords, maxWords])
+  const [range, setRange] = useState([props.minWords, props.maxWords])
 
   return (
     <div className='range-view'>
@@ -28,7 +28,7 @@ export default function RangeSlider({onSubmit, minWords, maxWords}: IRangeSlider
           setRange([leftValue, rightValue]);
         }}
         onChangeCommitted={() => {
-          onSubmit(range[0], range[1]);
+          props.onSubmit(range[0], range[1]);
         }}
         marks={[
           {

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import ReactWordcloud, { MinMaxPair, OptionsProp, Word } from 'react-wordcloud';
 import { removeStopwords } from 'stopword';
 
-interface IWordCloud {
+interface WordCloudProps {
   comments: string[],
   filter: string,
   minWords: number,
@@ -13,7 +13,7 @@ interface IWordCloud {
   setScoreRange: Function
 }
 
-export default memo(function WordCloud({comments, filter, minWords, maxWords, minScore, maxScore, stopWordFilter, setScoreRange}: IWordCloud) {
+export default memo(function WordCloud(props: WordCloudProps) {
 
   const words: Word[] = [];
   const options: OptionsProp = {
@@ -36,11 +36,11 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
     window.innerWidth > 1100 ? window.innerHeight * 0.60 : window.innerHeight * 0.50
   ];
 
-  let bottomScore: number = 0;
-  let topScore: number = 0;
+  let bottomScore = 0;
+  let topScore = 0;
 
-  if (!comments.length) {
-    let textChoices: string[] = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
+  if (!props.comments.length) {
+    let textChoices = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
     for (let i = 0; i < 50; i++) {
       let choice = Math.round(Math.random() * 12);
       let value = Math.round(Math.random() * 100);
@@ -56,7 +56,7 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
       });
     }
 
-    if (bottomScore !== null && topScore !== null) { setScoreRange(bottomScore, topScore); }
+    props.setScoreRange(bottomScore, topScore);
 
     return (
       <div className='wordcloud'>
@@ -71,18 +71,18 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
 
   let phrases: any = {};
 
-  for (let i = 0; i < comments.length; i++) {
+  for (let i = 0; i < props.comments.length; i++) {
     let tempPhrases: any = {};
-    let regex: string = comments[i].toLowerCase()
+    let regex = props.comments[i].toLowerCase()
     .replace(/[.,/#!$%^&*;:{}=\-_`"'’~()]/g, "")
     .replace(/[\W_]+/g," ");
-    let split: string[] = regex.split(' ');
-    if (stopWordFilter) {
+    let split = regex.split(' ');
+    if (props.stopWordFilter) {
       split = removeStopwords(split);
     }
-    for (let z = minWords; z <= maxWords && z <= split.length; z++) {
+    for (let z = props.minWords; z <= props.maxWords && z <= split.length; z++) {
       for (let j = 0; j + z <= split.length; j++) {
-        let phrase: string = split.slice(j, j + z).join(' ');
+        let phrase = split.slice(j, j + z).join(' ');
         if (phrase.length > 2) { // Exclude phrases under 3 characters
           if (!tempPhrases[phrase]) {
             tempPhrases[phrase] = 1;
@@ -100,14 +100,14 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
   }
 
   for (let key in phrases) {
-    if (key.includes(filter)) {
+    if (key.includes(props.filter)) {
       if (bottomScore === 0 || bottomScore > phrases[key]) {
         bottomScore = phrases[key];
       }
       if (topScore === 0 || topScore < phrases[key]) {
         topScore = phrases[key];
       }
-      if (phrases[key] >= minScore && phrases[key] <= maxScore) {
+      if (phrases[key] >= props.minScore && phrases[key] <= props.maxScore) {
         words.push({
           text: key,
           value: phrases[key]
@@ -116,9 +116,7 @@ export default memo(function WordCloud({comments, filter, minWords, maxWords, mi
     }
   }
 
-  if (bottomScore !== null && topScore !== null) {
-    setScoreRange(bottomScore, topScore);
-  }
+  props.setScoreRange(bottomScore, topScore);
 
   return (
     <div className='wordcloud'>

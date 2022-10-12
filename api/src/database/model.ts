@@ -16,11 +16,11 @@ const CommentModel = model<IComment>('Comment', commentSchema);
 
 // TODO: Works with partial match now, but want to explore this further
 // to possibly have it partial match only whole words
-export function getCommentsBySearchPartial(search: string, likeCount: number=0) {
+export function getCommentsBySearchPartial(search: string, likeCount: number=-1) {
   return CommentModel.find({search: { $regex: search }}).where('likeCount').gt(likeCount);
 }
 
-export function getCommentsBySearch(search: string, likeCount: number=0) {
+export function getCommentsBySearch(search: string, likeCount: number=-1) {
   return CommentModel.find({search}).where('likeCount').gt(likeCount);
 }
 

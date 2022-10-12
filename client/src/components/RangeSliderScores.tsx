@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Slider } from '@mui/material';
 
-interface IRangeSliderScores {
+interface RangeSliderScoresProps {
   onSubmit: Function,
   minScore: number,
   maxScore: number,
@@ -9,9 +9,9 @@ interface IRangeSliderScores {
   topScore: number
 }
 
-export default function RangeSliderScores({onSubmit, minScore, maxScore, bottomScore, topScore}: IRangeSliderScores) {
+export default function RangeSliderScores(props: RangeSliderScoresProps) {
 
-  const [range, setRange] = useState([minScore, maxScore]);
+  const [range, setRange] = useState([props.minScore, props.maxScore]);
 
   return (
     <div className='range-score-view'>
@@ -21,24 +21,24 @@ export default function RangeSliderScores({onSubmit, minScore, maxScore, bottomS
         sx={{width: '10em'}}
         value={range}
         valueLabelDisplay="auto"
-        min={bottomScore}
-        max={topScore}
+        min={props.bottomScore}
+        max={props.topScore}
         onChange={(e) => {
           let leftValue: number = (e.target as any).value[0];
           let rightValue: number = (e.target as any).value[1];
           setRange([leftValue, rightValue]);
         }}
         onChangeCommitted={() => {
-          onSubmit(range[0], range[1]);
+          props.onSubmit(range[0], range[1]);
         }}
         marks={[
           {
-            value: bottomScore,
-            label: bottomScore !== 0 ? bottomScore : ''
+            value: props.bottomScore,
+            label: props.bottomScore !== 0 ? props.bottomScore : ''
           },
           {
-            value: topScore,
-            label: topScore !== 0 ? topScore : ''
+            value: props.topScore,
+            label: props.topScore !== 0 ? props.topScore : ''
           }
         ]}
       />
