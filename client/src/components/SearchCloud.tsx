@@ -13,24 +13,26 @@ export default function SearchCloud(props: SearchCloudProps) {
   <div className='search-cloud'>
     <h3>Search</h3>
     <form>
-      <select
-        value={props.activeSearch}
-        onChange={(e) => props.setSearch(e.target.value)}
-      >
-        <option
-          value=''
-          key='default-option'
-          disabled
-          selected
+      <label>
+        <select
+          value={props.activeSearch}
+          onChange={(e) => props.setSearch(e.target.value)}
         >
-          See past searches
-        </option>
-        {
-          props.searches.map((search) => {
-            return <option value={search} key={search}>{search}</option>
-          })
-        }
-      </select>
+          <option
+            value=''
+            key='default-option'
+            disabled
+            selected
+          >
+            See past searches
+          </option>
+          {
+            props.searches.map((search) => {
+              return <option value={search} key={search}>{search}</option>
+            })
+          }
+        </select>
+      </label>
       {/* <Select
         options={
           this.state.searches.map((search) => {
