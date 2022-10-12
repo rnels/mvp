@@ -1,4 +1,4 @@
-export interface IComment {
+export type Comment = {
   _id: number,
   username: string,
   userId: string,

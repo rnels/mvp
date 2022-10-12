@@ -1,18 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import express, { Request, Response } from 'express';
 import * as model from './database/model';
-import { IComment, TypedRequestQuery, TypedRequestBody } from './interfaces';
+import { Comment, TypedRequestQuery, TypedRequestBody } from './types';
 
-declare var process : {
-  env: {
-    API_TOKEN1: string,
-    API_TOKEN2: string,
-    API_TOKEN3: string,
-    API_URL: string
-  }
-};
-
-let apiTokens: string[] = [
+let apiTokens: any[] = [
   process.env.API_TOKEN1,
   process.env.API_TOKEN2,
   process.env.API_TOKEN3
@@ -25,7 +16,12 @@ const router = express.Router();
 const tryApi = function(req: Request, res: Response, depth=0) {
   if (depth === apiTokens.length) {
     res.status(500).send({message: 'Unable to retrieve comments from YouTube'});
-    console.log('All API tokens are presumed to be spent up or invalid');
+    console.log(`
+      Summary: All API tokens are presumed to be spent up or invalid\n
+      Method: ${req.method}\n
+      Path: ${req.path}\n
+      Body: ${req.body}
+    `);
     return;
   }
   axios.get(`${process.env.API_URL}/search`, {
@@ -53,13 +49,13 @@ const tryApi = function(req: Request, res: Response, depth=0) {
               key: apiTokens[tokenIndex]
             }
           })
-            .catch((error: AxiosError) => null)
+            .catch((error: any) => null)
         );
       }
       return Promise.all(commentPromises);
     })
-    .then((responsePromises: AxiosResponse[]) => {
-      let comments: IComment[] = [];
+    .then((responsePromises: (AxiosResponse|null)[]) => {
+      let comments: Comment[] = [];
       for (let response of responsePromises) {
         if (response !== null) {
           for (let comment of response.data.items) {
@@ -78,42 +74,55 @@ const tryApi = function(req: Request, res: Response, depth=0) {
         }
       }
       if (!comments.length) {
-        res.status(400).send({message: `Couldn't retrieve comments for search ${req.body.search}`});
+        res.status(400).send({message: `Couldn't retrieve comments for search "${req.body.search}"`});
         return;
       }
       model.saveComments(comments)
         .then(() => res.status(201).send({message: 'Search created'}))
         .catch((error: any) => {
-          console.log('Error saving comments to database:', error);
+          console.log(`
+            Summary: Error saving comments to database\n
+            Method: ${req.method}\n
+            Path: ${req.path}\n
+            Body: ${req.body}\n
+            Error: ${error}
+          `);
           res.sendStatus(500);
         });
     })
-    .catch((error: AxiosError) => {
-      if ([403, 400].includes(error.response!.status)) {
+    .catch((error: any) => {
+      if (
+          error instanceof AxiosError &&
+          error.response &&
+          [403, 400].includes(error.response.status)
+        ) {
         let token = '';
         let cycles = 1;
         while (token === '' && cycles < apiTokens.length) {
-          if (tokenIndex < apiTokens.length - 1) {
-            tokenIndex += 1;
-          } else {
-            tokenIndex = 0;
-          }
+          if (tokenIndex < apiTokens.length - 1) tokenIndex += 1;
+          else tokenIndex = 0;
           token = apiTokens[tokenIndex];
           cycles++;
           console.log('Presumed API token error, switching tokens');
         }
         tryApi(req, res, depth + 1); // Call itself recursively if 403, rather than send 500
       } else {
-        console.log('Non-API token related error:', error);
+        console.log(`
+          Summary: Non-API token related error\n
+          Method: ${req.method}\n
+          Path: ${req.path}\n
+          Body: ${req.body}\n
+          Error: ${error}
+        `);
         res.sendStatus(500);
       }
     })
 }
 
-type GetCommentsParams = {
-  search: string,
-  likeCount: number
-}
+// type GetCommentsParams = {
+//   search: string,
+//   likeCount: number
+// }
 
 // Get comments from db
 // Expects from req.query:
@@ -128,7 +137,7 @@ router.get('/comments', (req, res) => {
     return;
   }
   model.getCommentsBySearchPartial(req.query.search as string, parseInt(req.query.likeCount as string) || -1)
-    .then((results: IComment[]) => {
+    .then((results: Comment[]) => {
       if (!results.length) {
         res.status(404).send({message: `No comments match the given search "${req.query.search}"`});
         return;
@@ -137,7 +146,13 @@ router.get('/comments', (req, res) => {
       res.status(200).send({comments});
     })
     .catch((error: any) => {
-      console.log('Error retrieving comments by search from database', error);
+      console.log(`
+        Summary: Error retrieving comments by search from database\n
+        Method: ${req.method}\n
+        Path: ${req.path}\n
+        Query: ${req.query}\n
+        Error: ${error}
+      `);
       res.sendStatus(500);
     });
 });
@@ -153,22 +168,28 @@ router.get('/comments', (req, res) => {
 // router.post('/comments', (req: TypedRequestBody<{ search: string }>, res: Response) => {
 router.post('/comments', (req, res) => {
   // console.log(req.body);
-  // Search API for videos by query
+  // Search YouTube API for videos based on provided search in req.body
   if (!req.body.search || typeof req.body.search !== 'string') {
-    res.status(400).send({message: 'Missing required query parameters'});
+    res.status(400).send({message: 'Missing required property "search" in request body'});
     return;
   }
   req.body.search = req.body.search.toLowerCase();
   model.doesSearchExist(req.body.search)
     .then((response) => {
       if (response) { // If this search has been done already, don't bother contacting the API
-        res.status(201).send({message: 'Search has been done previously'});
+        res.status(201).send({message: 'Search has been done previously'}); // TODO(?): Technically should be a redirect code?
         return;
       }
       tryApi(req, res);
     })
     .catch((error: any) => {
-      console.log('Error checking existence of search in database:', error);
+      console.log(`
+        Summary: Error checking existence of search in database\n
+        Method: ${req.method}\n
+        Path: ${req.path}\n
+        Body: ${req.body}\n
+        Error: ${error}
+      `);
       res.sendStatus(500);
     });
 
@@ -178,7 +199,12 @@ router.get('/searches', (req, res) => {
   model.getAllSearches()
     .then((searches: string[]) => res.status(200).send({searches}))
     .catch((error: any) => {
-      console.log('Error retrieving searches from database:', error);
+      console.log(`
+        Summary: Error retrieving searches from database\n
+        Method: ${req.method}\n
+        Path: ${req.path}\n
+        Error: ${error}
+      `);
       res.status(404).send({message: 'Unable to retrieve search list'});
     });
 });

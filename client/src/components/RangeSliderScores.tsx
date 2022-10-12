@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Slider } from '@mui/material';
 
-interface RangeSliderScoresProps {
+type RangeSliderScoresProps = {
   onSubmit: Function,
   minScore: number,
   maxScore: number,

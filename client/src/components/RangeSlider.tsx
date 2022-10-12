@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Slider } from '@mui/material';
 
-interface RangeSliderProps {
+type RangeSliderProps = {
   onSubmit: Function,
   minWords: number,
   maxWords: number
@@ -9,7 +9,7 @@ interface RangeSliderProps {
 
 export default function RangeSlider(props: RangeSliderProps) {
 
-  const [range, setRange] = useState([props.minWords, props.maxWords])
+  const [range, setRange] = useState([props.minWords, props.maxWords]);
 
   return (
     <div className='range-view'>

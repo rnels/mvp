@@ -9,11 +9,9 @@ import React from 'react';
 // import Select from 'react-select';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-interface AppProps {
+type AppProps = {};
 
-};
-
-interface AppState {
+type AppState = {
   comments: string[],
   searches: string[],
   activeSearch: string,
@@ -71,9 +69,10 @@ class App extends React.Component<AppProps, AppState> {
           loading: false
         }, () => this.getSearches(search));
       })
-      .catch((error: AxiosError) => {
+      .catch((error) => {
+        if (error instanceof AxiosError) console.log(error.message);
+        else console.log(error);
         this.setState({ loading: false });
-        console.log(error.response!.data);
       });
   }
 
@@ -86,8 +85,9 @@ class App extends React.Component<AppProps, AppState> {
           activeSearch
         });
       })
-      .catch((error: AxiosError) => {
-        console.log(error.response!.data);
+      .catch((error) => {
+        if (error instanceof AxiosError) console.log(error.message);
+        else console.log(error);
       });
   }
 
@@ -95,9 +95,10 @@ class App extends React.Component<AppProps, AppState> {
     if (!this.state.loading) this.setState({loading: true});
     axios.post(`${serverURL}/comments`, { search: this.state.addSearch })
       .then(() => this.getComments(this.state.addSearch))
-      .catch((error: AxiosError) => {
+      .catch((error) => {
+        if (error instanceof AxiosError) console.log(error.message);
+        else console.log(error);
         this.setState({ loading: false });
-        console.log(error.response!.data);
       });
   }
 

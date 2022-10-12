@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import ReactWordcloud, { MinMaxPair, OptionsProp, Word } from 'react-wordcloud';
 import { removeStopwords } from 'stopword';
 
-interface WordCloudProps {
+type WordCloudProps = {
   comments: string[],
   filter: string,
   minWords: number,
@@ -123,7 +123,7 @@ export default memo(function WordCloud(props: WordCloudProps) {
       <ReactWordcloud
         words={words}
         options={options}
-        size={size}
+        size={size} // TODO: Consider disabling this to enable responsive resizing
       />
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ReactComponent as Logo } from '../logo.svg';
 
-interface CloudLogoProps {
+type CloudLogoProps = {
   loading: boolean
 }
 
