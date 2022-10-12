@@ -47,7 +47,7 @@ class App extends React.Component<AppProps, AppState> {
       topScore: 0,
       filter: '',
       stopWordFilter: true,
-      loading: false
+      loading: true
     };
     this.getComments = this.getComments.bind(this);
     this.getSearches = this.getSearches.bind(this);
@@ -80,12 +80,14 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   getSearches(activeSearch='') {
+    if (!this.state.loading) { this.setState({ loading: true }); }
     axios.get(`${serverURL}/searches`)
       .then((result: AxiosResponse) => {
         let searches: string[] = result.data.searches;
         this.setState({
           searches,
-          activeSearch
+          activeSearch,
+          loading: false
         });
       })
       .catch((error) => {
@@ -141,8 +143,10 @@ class App extends React.Component<AppProps, AppState> {
                 loading={this.state.loading}
                 activeSearch={this.state.activeSearch}
                 searches={this.state.searches}
-                setSearch={(activeSearch: string) =>
-                  this.setState({ activeSearch }, () => this.getComments(this.state.activeSearch)) // Technically doesn't need to be done in the callback, could just pass activeSearch to getComments
+                setSearch={(activeSearch: string) => {
+                    this.setState({ activeSearch });
+                    this.getComments(activeSearch);
+                  }
                 }
               />
             </div>
@@ -181,17 +185,19 @@ class App extends React.Component<AppProps, AppState> {
             </div>
           </div>
         </div>
-        <WordCloud
-          key={'cloud'}
-          comments={this.state.comments}
-          minWords={this.state.minWords}
-          maxWords={this.state.maxWords}
-          minScore={this.state.minScore}
-          maxScore={this.state.maxScore}
-          filter={this.state.filter}
-          stopWordFilter={this.state.stopWordFilter}
-          setScoreRange={this.setScoreRange}
-        />
+        <div className='app-right'>
+          <WordCloud
+            key={'cloud'}
+            comments={this.state.comments}
+            minWords={this.state.minWords}
+            maxWords={this.state.maxWords}
+            minScore={this.state.minScore}
+            maxScore={this.state.maxScore}
+            filter={this.state.filter}
+            stopWordFilter={this.state.stopWordFilter}
+            setScoreRange={this.setScoreRange}
+          />
+        </div>
       </div>
     );
   }

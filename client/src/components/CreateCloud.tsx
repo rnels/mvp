@@ -28,14 +28,14 @@ export default function CreateCloud(props: CreateCloudProps) {
       <button
         type='submit'
         name='submit-search'
-        style={props.search.length < 3 || props.search.length > 35 || props.loading ? undefined : {
+        style={props.search.length < 3 || props.search.length > 32 || props.loading ? {cursor: 'default'} : {
           animationName: 'button-enabled',
           animationDuration: '0.5s',
           animationIterationCount: '1',
           animationTimingFunction: 'ease-in-out',
           animationFillMode: 'forwards'
         }}
-        disabled={props.search.length < 3 || props.search.length > 35 || props.loading}
+        disabled={props.search.length < 3 || props.search.length > 32 || props.loading}
       >
       {
         props.loading ? 'Loading' :

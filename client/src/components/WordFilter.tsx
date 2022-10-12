@@ -26,7 +26,7 @@ export default function WordFilter(props: WordFilterProps) {
             checked={props.stopWordFilter}
             onChange={(e) => props.setStopWordFilter(e.target.checked)}
           />
-        <small>Filter stop words</small>
+        <small style={{cursor: 'pointer'}}>Filter stop words</small>
       </label>
     </form>
   );

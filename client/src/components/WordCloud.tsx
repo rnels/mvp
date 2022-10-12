@@ -18,7 +18,7 @@ export default memo(function WordCloud(props: WordCloudProps) {
   const words: Word[] = [];
   const options: OptionsProp = {
     colors: ["#ff3333", "#ff9966", "#dfcc97", "#df4497", "#66cce6", "#90ee90"],
-    enableTooltip: true,
+    enableTooltip: false,
     deterministic: false,
     fontFamily: "Arial",
     fontSizes: [10, 40],
@@ -42,7 +42,7 @@ export default memo(function WordCloud(props: WordCloudProps) {
   if (!props.comments.length) {
     let textChoices = ['Comment Cloud', 'Comment Cloud', 'Comment Cloud', 'comment cloud', '¡Comment Cloud!', 'comment cloud!', 'comment', 'cloud', 'commentCloud', 'comment_cloud', '¿Comment cloud?'];
     for (let i = 0; i < 50; i++) {
-      let choice = Math.round(Math.random() * 12);
+      let choice = Math.round(Math.random() * 10);
       let value = Math.round(Math.random() * 100);
       if (bottomScore === 0 || bottomScore > value) {
         bottomScore = value;
@@ -50,10 +50,17 @@ export default memo(function WordCloud(props: WordCloudProps) {
       if (topScore === 0 || topScore < value) {
         topScore = value;
       }
-      words.push({
-        text: textChoices[choice],
-        value
-      });
+      if (
+        textChoices[choice].split(' ').length >= props.minWords &&
+        textChoices[choice].split(' ').length <= props.maxWords &&
+        value >= props.minScore &&
+        value <= props.maxScore
+      ) {
+        words.push({
+          text: textChoices[choice],
+          value
+        });
+      }
     }
 
     props.setScoreRange(bottomScore, topScore);

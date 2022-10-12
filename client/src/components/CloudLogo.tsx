@@ -11,14 +11,14 @@ export default function CloudLogo(props: CloudLogoProps) {
   const [inProp, setInProp] = useState(false);
   const nodeRef = useRef(null);
 
-    setTimeout(() => {
-      if (props.loading && !inProp) {
-        setInProp(true);
-        setTimeout(() => {
-          setInProp(false);
-        }, 4000);
-      }
-    }, 4000);
+  setTimeout(() => {
+    if (props.loading && !inProp) {
+      setInProp(true);
+      setTimeout(() => {
+        setInProp(false);
+      }, 4000);
+    }
+  }, 4000);
 
   return (
     <div className='cloud-logo'>
