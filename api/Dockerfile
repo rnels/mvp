@@ -1,3 +1,4 @@
+# TODO: Update with ts build(?) would need to run build script similar to client docker file
 FROM node:16
 WORKDIR /usr/src/app
 # Install app dependencies
@@ -11,6 +12,6 @@ RUN npm install --omit-dev
 # Bundle app source
 COPY . .
 
-EXPOSE 3001
+EXPOSE 3000
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "src/index.js" ]

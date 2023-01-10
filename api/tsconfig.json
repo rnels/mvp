@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "target": "ES6",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "allowUnreachableCode": false,
+    "strict": true
+  },
+  "typeAcquisition": {
+    "enable": true
+  },
+  "include": ["./src/**/*"]
+}

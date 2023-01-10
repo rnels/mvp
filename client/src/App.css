@@ -11,7 +11,8 @@
   padding-left: 10px;
   padding-right: 10px;
   gap: 20px;
-  width: 100%
+  width: 100%;
+  cursor: default;
 }
 
 .App-header {
@@ -21,13 +22,9 @@
   gap: 20px;
 }
 
-/* .main-section-left {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  border-style: solid;
-  border-width: 1px;
-} */
+.main-section-left {
+  min-width: 700px; /* Done to keep the select from changing width based on options contents (not ideal but oh well) */
+}
 /*
 .wordcloud {
   border-style: solid;
@@ -36,6 +33,10 @@
 
 form {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 label, button {
@@ -43,6 +44,7 @@ label, button {
 }
 
 label {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -112,16 +114,18 @@ input {
 }
 
 select {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   cursor: pointer;
   height: 45px;
   box-shadow: -4px 4px 3px #999999;
 }
 
 input.checkmark {
-  width: 1rem;
+  width: fit-content;
   cursor: pointer;
   background-color: transparent;
-  box-shadow: 0px 0px 0px #999999;
   padding: 0;
   margin: 0;
 }
@@ -174,7 +178,7 @@ select {
 
 button {
   /* border-radius: 5px; */
-  padding: 0.5rem 0;
+  padding: 0.5rem 2rem;
   margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
@@ -321,6 +325,7 @@ h3 {
   }
 
   .main-section-left {
+    min-width: 100%;
     flex-direction: column;
     justify-content: flex-start;
     flex-wrap: wrap;

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": { // Not really used at the moment (using react-scripts build), but can run ts-build if you want
+      "outDir": "./dist/",
+      "sourceMap": true,
+      "jsx": "react",
+      "allowJs": true,
+      "target": "es6",
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "skipLibCheck": true
+  },
+  "include": [
+      "./src/"
+  ]
+}

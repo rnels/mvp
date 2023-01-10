@@ -1,23 +1,24 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { ReactComponent as Logo } from '../logo.svg'; // TODO: Have a dark mode where you click the svg to activate it
+import { ReactComponent as Logo } from '../logo.svg';
 
-export default function CloudLogo({loading}) {
+type CloudLogoProps = {
+  loading: boolean
+}
+
+export default function CloudLogo(props: CloudLogoProps) {
 
   const [inProp, setInProp] = useState(false);
   const nodeRef = useRef(null);
 
-    setTimeout(() => {
-      if (loading && !inProp) {
-        setInProp(true);
-        setTimeout(() => {
-          setInProp(false);
-        }, 4000);
-      }
-    }, 4000);
-
-
-
+  setTimeout(() => {
+    if (props.loading && !inProp) {
+      setInProp(true);
+      setTimeout(() => {
+        setInProp(false);
+      }, 4000);
+    }
+  }, 4000);
 
   return (
     <div className='cloud-logo'>
@@ -27,13 +28,12 @@ export default function CloudLogo({loading}) {
             height={100}
             width={100}
             onClick={() => {
-              if (inProp) setInProp(false);
-              else setInProp(true);
+              if (inProp) { setInProp(false); }
+              else { setInProp(true); }
             }}
           />
         </div>
       </CSSTransition>
-
     </div>
   )
 };
